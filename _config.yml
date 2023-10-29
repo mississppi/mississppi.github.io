@@ -1,2 +1,3 @@
-baseurl: "/techblog"
-url: "https://mississppi.github.io"
+website: https://mississppi.github.io
+basewebsite: /blog
+permalink: date
