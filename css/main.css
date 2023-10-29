@@ -126,7 +126,8 @@ a:hover {
   }
 
   .content .detail{
-    margin: 0 auto;
+    /* margin: 0 auto; */
+    margin: 0 10px;
     width: calc(50% - 22px);
   }
 
