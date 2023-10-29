@@ -1,0 +1,21 @@
+---
+layout: default
+---
+
+<section class="content">
+    <div class="container">
+        <div class="details">
+            {% for post in site.posts %}
+                <article class="detail">
+                    <figure style="background-image: url('{{ post.postHero }}');"></figure>
+
+                    <div class="date">{{ post.date | date: '%B %d, %Y' }}</div>
+
+                    <div class="title"><a href="{{ post.url }}">{{ post.title }}<a href="{{ post.url }}"></a></div>
+
+                    <div class="category">php</div>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
