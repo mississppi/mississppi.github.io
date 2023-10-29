@@ -1,6 +1,2 @@
-defaults:
-  - scope:
-      path: ""
-      type: "posts"
-    # values:
-    #   permalink: /article/:title.html
+baseurl: ""
+url: ""
