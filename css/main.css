@@ -233,6 +233,7 @@ a:hover {
 .post-content code {
   box-sizing: border-box;
   width: 720px;
+  font-size: 0.8em;
   /* background-color: #787878; */
   line-height: 1.67;
     /* border-radius: 15px; */
