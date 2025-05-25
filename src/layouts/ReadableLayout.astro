@@ -1,0 +1,15 @@
+---
+// src/layouts/ReadableLayout.astro
+const { title } = Astro.props;
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="viewport" content="width=device-width" />
+  </head>
+  <body class="prose max-w-screen-md mx-auto p-4">
+    <slot />
+  </body>
+</html>

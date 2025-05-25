@@ -1,0 +1,76 @@
+---
+// BaseLayout.astro
+const { title = "techcampesinos", children } = Astro.props;
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{title}</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        background-color: #ffffff;
+        color: #000000;
+        font-family: "MS PGothic", "Osaka", sans-serif;
+        font-size: 14px;
+      }
+
+      h1, h2, h3 {
+        font-weight: bold;
+        border-bottom: 1px solid #000;
+        padding-bottom: 0.25em;
+      }
+
+      a {
+        color: #0000ee;
+        text-decoration: underline;
+      }
+
+      a:visited {
+        color: #800080;
+      }
+
+      hr {
+        margin: 2em 0;
+        border: none;
+        border-top: 1px solid #aaa;
+      }
+
+      ul {
+        padding-left: 1.5em;
+      }
+
+      footer {
+        margin-top: 3em;
+        font-size: 12px;
+        color: #666;
+      }
+
+      .box {
+        border: 1px solid #000;
+        padding: 10px;
+        background-color: #eeeeee;
+        margin-bottom: 1em;
+      }
+
+      .note {
+        font-size: 12px;
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>{title}</h1>
+    <main>
+      <slot />
+    </main>
+    <hr />
+    <footer>
+      &copy; {new Date().getFullYear()} techcampesinos  
+      <br />
+      <span class="note">This page is best viewed with Netscape Navigator 4.7</span>
+    </footer>
+  </body>
+</html>
