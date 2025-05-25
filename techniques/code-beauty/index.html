@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>コードに美しさを持たせる</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>コードに美しさを持たせる</h1> <main data-astro-cid-37fxchfa>  <p>プログラムにおいて、美しさは軽視されがちですが、<br>
+<strong>読みやすいコードは、しばしば見た目が整っている</strong>という特徴を持っています。</p>
+<hr>
+<h2 id="美しいコードは読む気にさせる">美しいコードは「読む気」にさせる</h2>
+<p>同じ機能のコードでも、<strong>整ったコードと乱雑なコード</strong>では、<br>
+読み手の印象も、理解速度もまったく違います。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// 乱雑なコード</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> a</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">; </span><span style="color:#F97583">let</span><span style="color:#E1E4E8"> b</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8">(a</span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8">b){b</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">a;}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 美しいコード</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> a </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> b </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (a </span><span style="color:#F97583">&#x3C;</span><span style="color:#E1E4E8"> b) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  b </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> a;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>フォーマットが揃っていることで、<strong>コードの構造が目に入りやすくなり、余計なストレスが減ります。</strong></p>
+<hr>
+<h2 id="類似したコードは似た見た目に">類似したコードは似た見た目に</h2>
+<p><strong>似た処理が並ぶときは、同じフォーマットで揃える</strong>ことで、パターンを読み取りやすくなります。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// 一貫性のある揃え方</span></span>
+<span class="line"><span style="color:#B392F0">drawText</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Name"</span><span style="color:#E1E4E8">, x, y);</span></span>
+<span class="line"><span style="color:#B392F0">drawText</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Age"</span><span style="color:#E1E4E8">,  x, y </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#B392F0">drawText</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Job"</span><span style="color:#E1E4E8">,  x, y </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<p>ズレやごちゃごちゃした記述は、<strong>無意識に脳の負荷になる</strong>ので避けましょう。</p>
+<hr>
+<h2 id="余白は情報を整理するツール">余白は情報を整理するツール</h2>
+<p>余白や空行は単なる「スペース」ではなく、<strong>情報の区切り</strong>を示す重要な記号です。<br>
+グループごとに<strong>意味のかたまりを明確に</strong>すると、読み手の理解がスムーズになります。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// 意味のまとまりを区切る</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> isLoggedIn</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> checkLogin</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">isLoggedIn) {</span></span>
+<span class="line"><span style="color:#B392F0">  redirectToLogin</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ユーザーがログインしていれば、プロフィールを表示</span></span>
+<span class="line"><span style="color:#B392F0">renderUserProfile</span><span style="color:#E1E4E8">();</span></span></code></pre>
+<hr>
+<h2 id="書いた後少しだけ整える">書いた後、<strong>少しだけ整える</strong></h2>
+<p>美しさとは、機能とは無関係に見えるけれど、<br>
+<strong>可読性と保守性を間接的に支える力</strong>を持っています。</p>
+<ul>
+<li>スペースや空行を整える</li>
+<li>類似コードの並びを揃える</li>
+<li>コメントの位置を整える</li>
+</ul>
+<p>これだけで、<strong>コード全体の信頼感が上がる</strong>こともあります。</p>
+<hr>
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li>美しいコードは、読む前から「読みやすい」と感じさせる</li>
+<li>類似した処理は、同じフォーマット・並びで統一する</li>
+<li>空白や余白は、意味のグループ化に使う</li>
+<li>書いた後、1〜2分で<strong>見た目を整える癖</strong>をつけよう</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

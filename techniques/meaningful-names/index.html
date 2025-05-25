@@ -1,0 +1,272 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>意味のある名前と誤解されない名前</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>意味のある名前と誤解されない名前</h1> <main data-astro-cid-37fxchfa>  <h2 id="基本の姿勢意味のある名前をつける第1章">基本の姿勢：意味のある名前をつける（第1章）</h2>
+<ul>
+<li>名前には“使い方・目的”を込める</li>
+<li>曖昧な名前（<code>data</code>, <code>handle</code>など）は避ける</li>
+<li>命名は「読み手へのメッセージ」として機能すべき</li>
+</ul>
+<hr>
+<h2 id="誤解されない名前の付け方第2章">誤解されない名前の付け方（第2章）</h2>
+<h3 id="-広すぎる名前は避ける">✅ 広すぎる名前は避ける</h3>
+<ul>
+<li>❌ <code>data</code>, <code>info</code>, <code>handle</code></li>
+<li>✅ <code>userData</code>, <code>accountInfo</code>, <code>fileHandle</code></li>
+</ul>
+<h3 id="-曖昧な動詞は避ける">✅ 曖昧な動詞は避ける</h3>
+<ul>
+<li>❌ <code>process</code>, <code>manage</code>, <code>handle</code></li>
+<li>✅ <code>parseConfig</code>, <code>convertToPdf</code>, <code>renderHtml</code></li>
+</ul>
+<h3 id="-より明確な単語を選ぶ">✅ より明確な単語を選ぶ</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>単語</th><th>ニュアンス・意味</th><th>主な目的・特徴</th><th>よく使う場面</th><th>具体的な使い方例</th></tr></thead><tbody><tr><td>send</td><td>一般的に「送る」</td><td>最も曖昧で汎用的な表現</td><td>メール、データ送信（ざっくり）</td><td><code>sendEmail(to, message)</code></td></tr><tr><td>deliver</td><td>「届ける」「相手に到達する」</td><td><strong>結果的に届いた状態</strong>を重視</td><td>メール、ファイル、通知など</td><td><code>deliverReportToManager()</code></td></tr><tr><td>dispatch</td><td>「出発させる」「指示を出す」</td><td><strong>発信の瞬間</strong>や<strong>命令的な動作</strong></td><td>イベント送出、ジョブキュー</td><td><code>dispatchEvent("USER_JOIN")</code></td></tr><tr><td>announce</td><td>「公に知らせる」「告知する」</td><td><strong>公開的な情報共有</strong>を目的とする</td><td>新機能リリース、アナウンスなど</td><td><code>announceUpdate(version)</code></td></tr><tr><td>distribute</td><td>「配る」「複数人に分配する」</td><td><strong>同じものを多数に届ける</strong></td><td>メルマガ、キャンペーン通知</td><td><code>distributeCouponCodes()</code></td></tr><tr><td>route</td><td>「経路に沿って送る」「転送する」</td><td><strong>中継・転送・経路制御</strong>がある場合</td><td>メッセージング、APIルーティング</td><td><code>routeMessageToQueue()</code></td></tr></tbody></table>
+<p>特に「どこから」「どうやって」「何を」見つけるのかが伝わりづらいため、具体的な単語に置き換えるとコードが読みやすい。</p>
+<hr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>単語</th><th>ニュアンス・意味</th><th>主な目的・特徴</th><th>よく使う場面</th><th>具体的な使い方例</th></tr></thead><tbody><tr><td>find</td><td>一般的な「見つける」</td><td>非常に汎用的。何を・どう見つけるかが不明確</td><td>検索、探索、抽出など</td><td><code>findUserById(id)</code></td></tr><tr><td>search</td><td>広範囲に「探す」「検索する」</td><td>対象の中から<strong>該当条件を探す</strong>ことに焦点</td><td>データベース検索、全文検索など</td><td><code>searchArticles("React")</code></td></tr><tr><td>extract</td><td>「引き出す」「取り出す」</td><td>データの中から<strong>必要な部分だけを抜き出す</strong></td><td>JSONパース、テキスト抽出</td><td><code>extractTitleFromMarkdown()</code></td></tr><tr><td>locate</td><td>「正確な位置を特定する」</td><td>どこにあるかを<strong>明示的に突き止める</strong></td><td>位置情報、UI要素の座標取得など</td><td><code>locateCursorPosition()</code></td></tr><tr><td>recover</td><td>「失われたものを探し出す／復元する」</td><td><strong>復旧・再取得</strong>のニュアンスが強い</td><td>セッション、バックアップ、復元</td><td><code>recoverSessionFromStorage()</code></td></tr></tbody></table>
+<p>このように、「探す」だけでも目的によって適切な単語を選ぶことで、<br>
+<strong>コードの意図がはっきり伝わる</strong>ようになります。</p>
+<hr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>単語</th><th>ニュアンス・意味</th><th>主な目的・特徴</th><th>よく使う場面</th><th>具体的な使い方例</th></tr></thead><tbody><tr><td>start</td><td>一般的な「始める」</td><td>曖昧・汎用的。何をどう始めるかは文脈依存</td><td>処理の開始、初期化など</td><td><code>startService()</code></td></tr><tr><td>launch</td><td>本格的な「立ち上げ」「起動」</td><td>大げさで目立つ始まり。<strong>プロジェクトやアプリの開始</strong></td><td>UI画面表示、製品リリース</td><td><code>launchApp()</code></td></tr><tr><td>create</td><td>「作成して始める」「生成してスタート」</td><td><strong>モノの生成</strong>をともなう開始</td><td>オブジェクト生成、初期構築</td><td><code>createSession()</code></td></tr><tr><td>begin</td><td>静かで自然な「始まり」</td><td><strong>プロセスの開始点</strong>を穏やかに示す</td><td>時間の流れやステップの開始</td><td><code>beginTransaction()</code></td></tr><tr><td>open</td><td>「扉を開ける」「状態を有効にする」</td><td><strong>何かを開いて利用可能にする</strong></td><td>ファイル・接続・ダイアログなど</td><td><code>openFileDialog()</code></td></tr></tbody></table>
+<hr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>単語</th><th>ニュアンス・意味</th><th>主な目的・特徴</th><th>よく使う場面</th><th>具体的な使い方例</th></tr></thead><tbody><tr><td>make</td><td>一般的な「作る」</td><td>超汎用。何を・どう作るかがまったく不明確</td><td>関数名、変数名など至る所</td><td><code>makeData()</code></td></tr><tr><td>create</td><td>ゼロから「生成する」「初期化する」</td><td><strong>存在しないものを新しく生む</strong></td><td>インスタンス生成、オブジェクト構築</td><td><code>createUser()</code></td></tr><tr><td>setup</td><td>「設定して使える状態にする」</td><td><strong>初期状態の準備</strong>が目的</td><td>初期化、テスト環境構築、UIの準備</td><td><code>setupDatabase()</code></td></tr><tr><td>build</td><td>構成部品から「組み立てる」</td><td><strong>ステップを踏んで段階的に構成する</strong></td><td>UI構築、クエリ生成、HTML組み立てなど</td><td><code>buildHtmlFromData()</code></td></tr><tr><td>generate</td><td>何かのロジックに基づいて「生成する」</td><td><strong>自動で作る・計算して生む</strong></td><td>ID生成、ランダムデータ、テンプレ展開</td><td><code>generateToken()</code></td></tr><tr><td>compose</td><td>既存要素を「組み合わせて構成する」</td><td><strong>小さな要素を組み合わせて大きな機能にする</strong></td><td>関数の合成、UIコンポーネント構築</td><td><code>composeMiddlewares()</code></td></tr><tr><td>add</td><td>「追加する」</td><td><strong>既存のものに何かを加える</strong></td><td>要素追加、リスト追加、DOM追加</td><td><code>addUserToGroup()</code></td></tr><tr><td>new</td><td>新しいインスタンスを「作成する」</td><td><strong>言語的にコンストラクタによる生成</strong></td><td><code>new</code> キーワードを使う場面</td><td><code>const user = new User()</code></td></tr></tbody></table>
+<h3 id="-名前の長さはスコープに比例">✅ 名前の長さはスコープに比例</h3>
+<ul>
+<li>一時的な変数（例：<code>i</code>, <code>temp</code>）は短くてOK</li>
+<li>グローバルや共有される名前は意味を込めて長めに</li>
+</ul>
+<h3 id="-情報を詰め込みすぎない">✅ 情報を詰め込みすぎない</h3>
+<ul>
+<li>❌ <code>readWriteFileAndLogErrorsAndCloseStream</code></li>
+<li>✅ <code>readFile</code> → <code>logErrors</code> → <code>closeStream</code> に分けて命名</li>
+</ul>
+<h3 id="-名前で型を推測させようとしない">✅ 名前で型を推測させようとしない</h3>
+<ul>
+<li>❌ <code>strTitle</code>, <code>nCount</code></li>
+<li>✅ <code>title</code>, <code>count</code>（型ではなく意味に集中）</li>
+</ul>
+<h3 id="-名前は読者の予想と一致させる">✅ 名前は読者の「予想」と一致させる</h3>
+<ul>
+<li>❌ <code>list</code> が <code>Map</code> 型だった</li>
+<li>✅ 名前と実態が一致していることを重視</li>
+</ul>
+<hr>
+<h2 id="備考">備考</h2>
+<p>「良い名前」とは、短くてクールな名前ではなく、<strong>読み手がその意図を一瞬で誤解なく理解できる名前</strong>。<br>
+名前は最も多く読まれる「コメント」である。</p>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

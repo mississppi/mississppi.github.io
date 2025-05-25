@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>変数を読みやすくする</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>変数を読みやすくする</h1> <main data-astro-cid-37fxchfa>  <p>変数はコードの読みやすさ・理解のしやすさに大きな影響を与えます。<br>
+この章では、<strong>不要な変数を減らし、必要な変数をより明確に扱う技術</strong>が紹介されています。</p>
+<hr>
+<h2 id="変数を削除する">変数を削除する</h2>
+<p>一時的な変数が<strong>まったく意味を持たない</strong>場合、それは削除の対象です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 無意味な一時変数</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> getUserName</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> name</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> result;</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(name);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 直接使えばよい</span></span>
+<span class="line"><span style="color:#E1E4E8">console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(</span><span style="color:#B392F0">getUserName</span><span style="color:#E1E4E8">());</span></span></code></pre>
+<hr>
+<h2 id="中間結果を削除する">中間結果を削除する</h2>
+<p>一度しか使わない中間結果を変数に保持するのは、<strong>かえって読みにくくなることがあります</strong>。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 中間結果に名前をつけるほどでもない</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> temp</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> a </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> b;</span></span>
+<span class="line"><span style="color:#F97583">return</span><span style="color:#E1E4E8"> temp </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ そのまま書いたほうがわかりやすい</span></span>
+<span class="line"><span style="color:#F97583">return</span><span style="color:#E1E4E8"> (a </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> b) </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<hr>
+<h2 id="制御フロー変数を削除する">制御フロー変数を削除する</h2>
+<p>フラグのように制御の流れを表す変数は、<strong>ロジックを複雑にしやすい</strong>です。<br>
+分岐を直接使ったほうが読みやすいことが多いです。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 制御フロー変数の例</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> found </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> false</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">const</span><span style="color:#79B8FF"> item</span><span style="color:#F97583"> of</span><span style="color:#E1E4E8"> list) {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (item </span><span style="color:#F97583">===</span><span style="color:#E1E4E8"> target) {</span></span>
+<span class="line"><span style="color:#E1E4E8">    found </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> true</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">    break</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (found) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 単純な条件にする</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (list.</span><span style="color:#B392F0">includes</span><span style="color:#E1E4E8">(target)) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span></code></pre>
+<hr>
+<h2 id="変数のスコープを縮める">変数のスコープを縮める</h2>
+<p>変数が見える範囲（スコープ）は<strong>できるだけ小さく</strong>するべきです。</p>
+<ul>
+<li>スコープが広いと、どこで使われているか追うのが大変になる</li>
+<li>名前の衝突や誤解も起きやすくなる</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 不必要にスコープが広い</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> result;</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (condition) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  result </span><span style="color:#F97583">=</span><span style="color:#B392F0"> compute</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 必要な場所で定義する</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (condition) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> result</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> compute</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="メンバ変数はミニグローバル">メンバ変数は「ミニグローバル」</h3>
+<p>クラスのメンバ変数は、<strong>クラス全体から参照される＝スコープが非常に広い</strong>ということ。</p>
+<ul>
+<li>本当に必要か見直そう</li>
+<li>メソッドを <code>static</code> にできないか検討しよう</li>
+</ul>
+<h3 id="大きなクラスを小さなクラスに分割する">大きなクラスを小さなクラスに分割する</h3>
+<p>責任を限定することで、<strong>変数の意味と役割が明確になる</strong></p>
+<h3 id="クロージャも有効">クロージャも有効</h3>
+<p>関数の中に関数を作ることで、変数のスコープを<strong>より小さく閉じ込める</strong>ことができる。</p>
+<hr>
+<h2 id="定義の位置を下げる">定義の位置を下げる</h2>
+<p>昔の C 言語などでは「変数は最初に宣言」とされていましたが、<br>
+現在では <strong>使う直前に定義する</strong>のが可読性の観点でもベストです。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 無駄に最初に宣言</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> count;</span></span>
+<span class="line"><span style="color:#F97583">...</span></span>
+<span class="line"><span style="color:#E1E4E8">count </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> items.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 必要な時点で宣言</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> count</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> items.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<hr>
+<h2 id="一度だけ書き込む変数を使う">一度だけ書き込む変数を使う</h2>
+<p>変数への<strong>再代入が多いと追いにくくなる</strong>ため、原則として**「一度だけ代入される変数」が望ましい**です。<br>
+そのほうが、「この値がどこで決まったか」が明確になります。</p>
+<p><code>const</code>（再代入不可）を使うことで、<strong>意図を明示できる</strong>のも利点です。</p>
+<hr>
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li>無意味な一時変数や中間結果は削除する</li>
+<li>制御フロー変数は分岐や関数で代替する</li>
+<li>スコープは可能な限り小さく。メンバ変数を減らし、クロージャや静的メソッドも活用</li>
+<li>変数は「使う直前」で宣言し、再代入のない <code>const</code> を基本に</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

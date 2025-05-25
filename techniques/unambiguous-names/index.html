@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>誤解されない名前をつける</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>誤解されない名前をつける</h1> <main data-astro-cid-37fxchfa>  <h2 id="範囲を表す変数には明確な接頭語を">範囲を表す変数には明確な接頭語を</h2>
+<p>数値や要素の範囲を扱う場合、以下のような接頭語ルールに従うと、
+読み手が意図を正確に理解しやすくなります：</p>
+<p>min_, max_: 上限・下限（含むかどうか問わず）</p>
+<p>first, last: 包含的な範囲（どちらも含まれる）</p>
+<p>begin, end: 排他的な範囲（end は含まない）</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>const minAge = 18;</span></span>
+<span class="line"><span>const maxAge = 65;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>const firstIndex = 0;</span></span>
+<span class="line"><span>const lastIndex = array.length - 1;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>const begin = 0;</span></span>
+<span class="line"><span>const end = 5; // 対象は 0〜4、5 は含まれない</span></span></code></pre>
+<p>特に begin / end というペアは、end が排他的であることを示唆できるため、
+配列スライスや文字列操作などで役立ちます。</p>
+<h2 id="ブール値は質問のように書く">ブール値は質問のように書く</h2>
+<p>ブール値の変数や関数には、is, has, can などの質問形の接頭語をつけることで、読みやすく、直感的になります。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>const isAdmin = user.role === "admin";</span></span>
+<span class="line"><span>const hasPermission = checkPermission(user);</span></span>
+<span class="line"><span>const canAccess = isLoggedIn &#x26;&#x26; hasPermission;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>また、notX のような否定形の名前はなるべく避けましょう。</span></span>
+<span class="line"><span>否定の否定は、読みづらく、バグの温床にもなります。</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>// ❌ 読みにくい
+if (!notFound) { … }</p>
+<p>// ✅ 肯定形で
+if (found) { … }</p>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

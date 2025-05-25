@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>git stashの使い方（-uの違いと戻し方）</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>git stashの使い方（-uの違いと戻し方）</h1> <main data-astro-cid-37fxchfa>  <h2 id="git-stash-と-git-stash--u-の違い"><code>git stash</code> と <code>git stash -u</code> の違い</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>コマンド</th><th>保存対象</th></tr></thead><tbody><tr><td><code>git stash</code></td><td><strong>変更した tracked ファイル</strong> のみ</td></tr><tr><td><code>git stash -u</code></td><td><strong>tracked + untracked ファイル</strong>（未追跡ファイルも含む）</td></tr></tbody></table>
+<h3 id="trackedとは">trackedとは？</h3>
+<ul>
+<li><code>git add</code> して Git に登録されたファイル。</li>
+<li>変更は stash できる。</li>
+</ul>
+<h3 id="untrackedとは">untrackedとは？</h3>
+<ul>
+<li>作ったけど <code>git add</code> していないファイル（<code>git status</code> で赤い文字になる）。</li>
+<li><code>git stash</code> だけでは退避されない。</li>
+<li><code>git stash -u</code> で退避できる。</li>
+</ul>
+<hr>
+<h2 id="stash-したときの戻し方">stash したときの戻し方</h2>
+<h3 id="一番新しい-stash-を適用して削除">一番新しい stash を適用して削除</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> stash</span><span style="color:#9ECBFF"> pop</span></span></code></pre>
+<h3 id="指定の-stash-を適用削除しない">指定の stash を適用（削除しない）</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> stash</span><span style="color:#9ECBFF"> apply</span><span style="color:#9ECBFF"> stash@{</span><span style="color:#79B8FF">0</span><span style="color:#9ECBFF">}</span></span></code></pre>
+<h3 id="指定の-stash-を削除">指定の stash を削除</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> stash</span><span style="color:#9ECBFF"> drop</span><span style="color:#9ECBFF"> stash@{</span><span style="color:#79B8FF">0</span><span style="color:#9ECBFF">}</span></span></code></pre>
+<h3 id="一覧から選ぶとき">一覧から選ぶとき</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> stash</span><span style="color:#9ECBFF"> list</span></span></code></pre>
+<hr>
+<h2 id="補足">補足</h2>
+<ul>
+<li><code>git stash -a</code> は <code>.gitignore</code> されたファイルも含む（通常は使わない）</li>
+<li><code>pop</code> は失敗すると変更が失われる可能性があるため、慎重に</li>
+<li><code>apply</code> + <code>drop</code> で段階的に戻すのもアリ</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

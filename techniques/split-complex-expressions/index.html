@@ -1,0 +1,74 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>巨大な式を分割する</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>巨大な式を分割する</h1> <main data-astro-cid-37fxchfa>  <p>複雑で巨大な式は、読みづらくバグの温床になります。<br>
+この章では、<strong>巨大な式や文を整理・分割して読みやすくするテクニック</strong>が紹介されています。</p>
+<hr>
+<h2 id="説明変数">説明変数</h2>
+<p>複雑な式の一部に名前をつけて切り出すと、<strong>何を意味するのかが見えるようになります。</strong><br>
+これが「説明変数（explaining variable）」の基本です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 何をしているかわからない</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (user.age </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 64</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#E1E4E8"> user.status </span><span style="color:#F97583">!==</span><span style="color:#9ECBFF"> "retired"</span><span style="color:#F97583"> &#x26;&#x26;</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">user.hasBenefit) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 説明変数を使って明確に</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> isSenior</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> user.age </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 64</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> isActive</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> user.status </span><span style="color:#F97583">!==</span><span style="color:#9ECBFF"> "retired"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> lacksBenefit</span><span style="color:#F97583"> =</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">user.hasBenefit;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (isSenior </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> isActive </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> lacksBenefit) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span></code></pre>
+<hr>
+<h2 id="ようやく変数">ようやく変数</h2>
+<p>「式全体が何を意味しているか」を明示するために、<strong>最終結果を変数に代入するテクニック</strong>です。<br>
+読者に「これは何のための式か？」を一発で伝えます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> shouldRequestSupport</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> isSenior </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> isActive </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#E1E4E8"> lacksBenefit;</span></span></code></pre>
+<hr>
+<h2 id="ドモルガンの法則">ド・モルガンの法則</h2>
+<p>否定を分配して論理式を変形する法則です。<br>
+<strong>複雑な否定式を読みやすく書き換える手段</strong>として使えます。</p>
+<h3 id="ドモルガンの覚え方">ド・モルガンの覚え方</h3>
+<ul>
+<li><code>!(A &#x26;&#x26; B)</code> → <code>!A || !B</code></li>
+<li><code>!(A || B)</code> → <code>!A &#x26;&#x26; !B</code></li>
+</ul>
+<p>逆方向も同様に：</p>
+<ul>
+<li><code>!A || !B</code> → <code>!(A &#x26;&#x26; B)</code></li>
+<li><code>!A &#x26;&#x26; !B</code> → <code>!(A || B)</code></li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 読みにくい否定の組み合わせ</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">(isAdmin </span><span style="color:#F97583">||</span><span style="color:#E1E4E8"> isManager)) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ ド・モルガンでわかりやすく</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">isAdmin </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#F97583"> !</span><span style="color:#E1E4E8">isManager) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span></code></pre>
+<hr>
+<h2 id="短絡評価の悪用に注意">短絡評価の悪用に注意</h2>
+<p>JavaScriptなどの言語では、短絡評価（<code>&#x26;&#x26;</code> や <code>||</code>）を使って条件と処理を1行にまとめられますが、<br>
+<strong>「頭いい感じ」で書いても読み手は混乱するだけ</strong>です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 一見かっこいいけど読みにくい</span></span>
+<span class="line"><span style="color:#E1E4E8">isValid </span><span style="color:#F97583">&#x26;&#x26;</span><span style="color:#B392F0"> doSomething</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 明確な分岐</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (isValid) {</span></span>
+<span class="line"><span style="color:#B392F0">  doSomething</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="複雑なロジックと格闘する">複雑なロジックと格闘する</h2>
+<p>ときには創造性も必要です。<br>
+「自然に書けない」式と出会ったら、<strong>反対側から問題を解く・条件を逆転して考える</strong>と突破口が見えることがあります。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// 条件を逆にしたらシンプルになることもある</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">isGuest) {</span></span>
+<span class="line"><span style="color:#B392F0">  showDashboard</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="巨大な文を分割する">巨大な文を分割する</h2>
+<p>式だけでなく、<strong>1つの文が長くなりすぎると、それ自体が理解を妨げます。</strong><br>
+適切な変数、関数分割、処理の順序を工夫し、読みやすく整理しましょう。</p>
+<hr>
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li>巨大な式は、説明変数やようやく変数で分割して意味を明示する</li>
+<li>ド・モルガンの法則を活用して否定のロジックを整理する</li>
+<li>短絡評価を乱用せず、読み手を意識した書き方を心がける</li>
+<li>ロジックに詰まったら、逆から考える発想も有効</li>
+<li>巨大な「文」も読みやすく分けて構造を整える</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

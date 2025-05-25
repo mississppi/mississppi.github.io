@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>制御構造を読みやすくする</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>制御構造を読みやすくする</h1> <main data-astro-cid-37fxchfa>  <p>制御構造は、コードの流れを決定づける重要な要素です。<br>
+この章では、**条件式や分岐、ネストを「読みやすく整理する技法」**について学びます。</p>
+<hr>
+<h2 id="条件式の引数の並び順">条件式の引数の並び順</h2>
+<p>条件式では、**左側に調査対象（変化するもの）**を、<br>
+**右側に比較対象（安定しているもの）**を置くと自然な読み方になります。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// 調査対象が左、比較対象が右</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (userInput </span><span style="color:#F97583">===</span><span style="color:#79B8FF"> DEFAULT_VALUE</span><span style="color:#E1E4E8">) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span></code></pre>
+<p>このように書くことで、読み手は「何を比較しているのか」がすっと頭に入ります。</p>
+<hr>
+<h2 id="ifelseブロックの並び順">if/elseブロックの並び順</h2>
+<h3 id="条件は否定よりも肯定を使う">条件は否定よりも肯定を使う</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 否定を使うと読みにくい</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#E1E4E8">isReady) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 肯定の条件を使う</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (isReady) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span></code></pre>
+<h3 id="単純な条件を先に書く">単純な条件を先に書く</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (user </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> null</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 複雑な処理はあとから読む</span></span></code></pre>
+<h3 id="関心を引く目立つ条件を先に書く">関心を引く・目立つ条件を先に書く</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (hasCriticalError) {</span></span>
+<span class="line"><span style="color:#B392F0">  shutdown</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">} </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (hasWarning) {</span></span>
+<span class="line"><span style="color:#B392F0">  logWarning</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<h3 id="否定系でも注意を引くものは先に処理する">否定系でも注意を引くものは先に処理する</h3>
+<p>読み手にインパクトがある処理は、<strong>否定系でも先に扱う</strong>と意図が伝わりやすくなります。</p>
+<hr>
+<h2 id="三項演算子は控えめに">三項演算子は控えめに</h2>
+<p>三項演算子（<code>condition ? a : b</code>）は短くて便利ですが、<strong>複雑になると読みにくくなります</strong>。<br>
+基本的には <code>if/else</code> を使い、簡潔なときだけ三項演算子を使いましょう。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ ネストされた三項演算子は避ける</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> level</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> score </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 80</span><span style="color:#F97583"> ?</span><span style="color:#9ECBFF"> "high"</span><span style="color:#F97583"> :</span><span style="color:#E1E4E8"> score </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 50</span><span style="color:#F97583"> ?</span><span style="color:#9ECBFF"> "medium"</span><span style="color:#F97583"> :</span><span style="color:#9ECBFF"> "low"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 読みやすい分岐にする</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (score </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 80</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  level </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "high"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">} </span><span style="color:#F97583">else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (score </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 50</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  level </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "medium"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">} </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  level </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "low"</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="dowhile-は避ける">do/while は避ける</h2>
+<p><code>do/while</code> はループの意図が見えづらく、誤解を招くことがあるため、<strong>原則として避ける方が無難</strong>です。<br>
+代わりに通常の <code>while</code> や <code>for</code> を使って、<strong>明示的な流れを表現</strong>しましょう。</p>
+<hr>
+<h2 id="関数から早く返す">関数から早く返す</h2>
+<p>処理を早めに打ち切ることで、<strong>コードのネストが減り、読みやすくなります。</strong><br>
+この手法は「ガード節（Guard Clause）」と呼ばれます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ✅ ガード節で早期リターン</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">!</span><span style="color:#B392F0">isValid</span><span style="color:#E1E4E8">(user)) {</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">process</span><span style="color:#E1E4E8">(user);</span></span></code></pre>
+<hr>
+<h2 id="ネストを浅くする">ネストを浅くする</h2>
+<p>ネストが深くなると、<strong>読み手の理解コストが急増します</strong>。</p>
+<ul>
+<li>ガード節で早く返す</li>
+<li>条件を関数に切り出す</li>
+<li>無駄な else を避ける</li>
+</ul>
+<p>などのテクニックで、<strong>コードをフラットに保ちましょう。</strong></p>
+<hr>
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li>条件式は「変わるものを左」「変わらないものを右」に</li>
+<li>条件は肯定形で書き、重要なもの・単純なものを先に扱う</li>
+<li>三項演算子の乱用は避け、<code>if/else</code> を基本に</li>
+<li><code>do/while</code> は避け、読みやすいループを</li>
+<li>関数から早く返し、ネストを浅く保つ</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

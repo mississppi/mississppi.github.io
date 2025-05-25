@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>コードの意図を明確にする</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>コードの意図を明確にする</h1> <main data-astro-cid-37fxchfa>  <p><strong>コードは「何をしているか」だけでなく「なぜそうしているか」が伝わることが大切です。</strong><br>
+この章では、「意図が読み取れるコードを書く」ことの重要性について説明されています。</p>
+<hr>
+<h2 id="コードは見た目以上に意味を持つべき">コードは見た目以上に意味を持つべき</h2>
+<p>悪いコードは、何をしているかはわかっても、なぜそうしているのかが不明瞭です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 悪い例（意図が読めない）</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (days </span><span style="color:#F97583">&#x3C;</span><span style="color:#79B8FF"> 7</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  charge </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 5</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ✅ 良い例（意図が読み取れる）</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> isWithinOneWeek</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> days </span><span style="color:#F97583">&#x3C;</span><span style="color:#79B8FF"> 7</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (isWithinOneWeek) {</span></span>
+<span class="line"><span style="color:#E1E4E8">  charge </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 5</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>変数名に意図を表すことで、<strong>読み手が自然に納得できるコード</strong>になります。</p>
+<hr>
+<h2 id="なぜこの処理なのかを明らかにする">「なぜこの処理なのか」を明らかにする</h2>
+<p>複雑な条件や計算式は、「なぜそうするのか？」という文脈が重要です。<br>
+それを明らかにする手段として、<strong>補助変数を使う・関数に切り出す</strong>などが有効です。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// 理由がわかるように関数名で意図を表す</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (</span><span style="color:#B392F0">isWeekend</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">||</span><span style="color:#B392F0"> isHoliday</span><span style="color:#E1E4E8">()) {</span></span>
+<span class="line"><span style="color:#B392F0">  applyDiscount</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<hr>
+<h2 id="コードに意図を埋め込むテクニック">コードに意図を埋め込むテクニック</h2>
+<ul>
+<li>マジックナンバーを避けて、<strong>定数名で意味を表す</strong></li>
+<li>条件式を<strong>変数に置き換える</strong></li>
+<li>複雑な処理を<strong>関数で明示的に分ける</strong></li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// ❌ 意図が見えない</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (user.age </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 64</span><span style="color:#E1E4E8">) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// ✅ 意図が明確</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> isSeniorCitizen</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> user.age </span><span style="color:#F97583">></span><span style="color:#79B8FF"> RETIREMENT_AGE</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#F97583">if</span><span style="color:#E1E4E8"> (isSeniorCitizen) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span></code></pre>
+<hr>
+<h2 id="読み手がなぜと思わないコードを目指す">読み手が「なぜ？」と思わないコードを目指す</h2>
+<p>読みやすいコードとは、<strong>読み手が一度読んだだけで納得できるコード</strong>です。<br>
+そのためには「この条件はどういう意味？」「この数値の意味は？」と感じさせないように、<br>
+<strong>コードに理由や背景を埋め込む工夫</strong>が求められます。</p>
+<hr>
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li>「なぜその処理なのか？」をコードから読み取れるようにする</li>
+<li>条件や値には、<strong>意図を表す変数名や定数名</strong>を使う</li>
+<li>関数や補助変数を使って、コードの背景を表現する</li>
+<li>読み手が立ち止まらずに理解できるコードを目指す</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

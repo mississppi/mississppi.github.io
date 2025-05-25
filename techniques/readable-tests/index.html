@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>テストを読みやすくする</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>テストを読みやすくする</h1> <main data-astro-cid-37fxchfa>  <p>テストはコードの品質を守るための重要な手段です。<br>
+この章では、<strong>テストそのものの可読性と保守性を高める工夫</strong>が紹介されています。</p>
+<hr>
+<h2 id="テストを読みやすく保守しやすくする">テストを読みやすく保守しやすくする</h2>
+<p>テストコードも実際のコードと同じく、<strong>読みやすく、意図が明確であることが大切</strong>です。<br>
+テストの読みやすさが、バグの発見効率やコード改善意欲に大きく影響します。</p>
+<hr>
+<h2 id="最小のテストを作る">最小のテストを作る</h2>
+<p>1つのテストで<strong>複数のケースを同時に検証しないこと</strong>。</p>
+<ul>
+<li><strong>1テスト = 1目的</strong> を意識しよう</li>
+<li>テストが失敗したときに「何が悪いか」が一目でわかるように</li>
+</ul>
+<hr>
+<h2 id="独自のミニ言語を実装する">独自のミニ言語を実装する</h2>
+<p>たとえば <code>assertEquals(expected, actual)</code> を独自に <code>expect(actual).toEqual(expected)</code> のように<br>
+<strong>読みやすくラップすることで、テスト文を自然言語のように読めるようにする</strong>工夫。</p>
+<hr>
+<h2 id="エラーメッセージを読みやすく">エラーメッセージを読みやすく</h2>
+<p>テストが失敗したとき、<strong>エラー内容が原因を特定できるように</strong>しておく。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#B392F0">assertEquals</span><span style="color:#E1E4E8">(user.name, </span><span style="color:#9ECBFF">"Alice"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"ユーザー名が正しくセットされていること"</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<hr>
+<h2 id="テストに適切な入力値を設計する">テストに適切な入力値を設計する</h2>
+<ul>
+<li>境界値、エラー値、異常系、ゼロなどをカバー</li>
+<li>「実際にありがちな」入力に近づけることで、<strong>信頼性のあるテスト</strong>になる</li>
+</ul>
+<hr>
+<h2 id="テストの機能に名前をつける">テストの機能に名前をつける</h2>
+<h3 id="テスト対象を明確に">テスト対象を明確に：</h3>
+<ul>
+<li>クラス名</li>
+<li>関数名</li>
+<li>状況名（バグ番号・ユースケース）</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#B392F0">test</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"User#login: 正しいパスワードでログイン成功する"</span><span style="color:#E1E4E8">, () </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">  ...</span></span>
+<span class="line"><span style="color:#E1E4E8">});</span></span></code></pre>
+<hr>
+<h2 id="設計とテスト容易性の関係まとめ表">設計とテスト容易性の関係（まとめ表）</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>特性</th><th>テスト容易性の問題</th><th>設計上の問題</th></tr></thead><tbody><tr><td><strong>1. グローバル変数を使っている</strong></td><td>各テストで初期化が必要</td><td>副作用の範囲が不明。全体の理解が必要</td></tr><tr><td><strong>2. 外部コンポーネントに依存</strong></td><td>テスト前のセットアップが大変。書かれなくなる</td><td>依存先の不具合に弱く、リファクタが困難</td></tr><tr><td><strong>3. 非決定的な動作</strong></td><td>テスト結果が不安定で信頼できない</td><td>バグの再現が困難。追跡・修正が難しい</td></tr></tbody></table>
+<hr>
+<hr>
+<h2 id="テストしやすいコードの特徴と設計の利点">テストしやすいコードの特徴と設計の利点</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>特性</th><th>テスト容易性の利点</th><th>設計上の利点</th></tr></thead><tbody><tr><td><strong>1. クラスが小さく、内部状態を持たない</strong></td><td>テストしやすい</td><td>状態が少なく、理解しやすい</td></tr><tr><td><strong>2. クラスが1つのことをしている</strong></td><td>テストケースが少なくて済む</td><td>小さいコンポーネントとしてモジュール化され、疎結合</td></tr><tr><td><strong>3. クラスが高度に疎結合している</strong></td><td>独立してテストできる</td><td>並列開発や修正・削除がしやすい</td></tr><tr><td><strong>4. 関数が単純でインターフェースが明確</strong></td><td>明確な動作をテストでき、テストが楽</td><td>わかりやすく、再利用しやすい</td></tr></tbody></table>
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li>テストコードも「読みやすさ」が重要</li>
+<li>最小単位で書き、意図を明示しよう</li>
+<li>テストが失敗したときの原因がすぐわかるように工夫する</li>
+<li>テスト困難な構造（副作用・依存・非決定性）は設計の見直しポイント</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

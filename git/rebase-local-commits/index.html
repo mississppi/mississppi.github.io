@@ -1,0 +1,47 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>ローカルでコミットメッセージをまとめる方法</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>ローカルでコミットメッセージをまとめる方法</h1> <main data-astro-cid-37fxchfa>  <h2 id="状況">状況</h2>
+<p>コミットを細かく行っていたが、プルリク提出前に<strong>1つのまとまった意味のあるコミット</strong>にしたい。</p>
+<hr>
+<h2 id="やり方git-rebase--i">やり方：<code>git rebase -i</code></h2>
+<p>以下の手順でローカルコミットをまとめられる。</p>
+<hr>
+<h3 id="-過去のコミットを編集モードで開く">① 過去のコミットを編集モードで開く</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> rebase</span><span style="color:#79B8FF"> -i</span><span style="color:#9ECBFF"> HEAD~3</span></span></code></pre>
+<p>※ ここでは直前の3コミットを対象にする。</p>
+<hr>
+<h3 id="-編集画面で-pick-を-squash-に変更">② 編集画面で <code>pick</code> を <code>squash</code> に変更</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">pick</span><span style="color:#9ECBFF"> ghi789</span><span style="color:#9ECBFF"> implement</span><span style="color:#9ECBFF"> header</span></span>
+<span class="line"><span style="color:#B392F0">squash</span><span style="color:#9ECBFF"> def456</span><span style="color:#9ECBFF"> add</span><span style="color:#9ECBFF"> footer</span></span>
+<span class="line"><span style="color:#B392F0">squash</span><span style="color:#9ECBFF"> abc123</span><span style="color:#9ECBFF"> fix</span><span style="color:#9ECBFF"> typo</span></span></code></pre>
+<hr>
+<h3 id="-メッセージを整理">③ メッセージを整理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="txt"><code><span class="line"><span>Implement layout</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 以下の元コミットメッセージは削除してOK</span></span>
+<span class="line"><span># add footer</span></span>
+<span class="line"><span># fix typo</span></span></code></pre>
+<hr>
+<h3 id="-git-log-で確認">④ <code>git log</code> で確認</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sh"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> log</span><span style="color:#79B8FF"> --oneline</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 出力例:</span></span>
+<span class="line"><span style="color:#B392F0">xyz999</span><span style="color:#9ECBFF"> Implement</span><span style="color:#9ECBFF"> layout</span></span></code></pre>
+<hr>
+<h2 id="-注意点">💡 注意点</h2>
+<ul>
+<li>push 前にやるのが基本</li>
+<li>すでに push 済みの場合は <code>git push --force-with-lease</code> が必要</li>
+<li>意図の違うコミット（バグ修正とUI修正など）は<strong>無理にまとめない</strong></li>
+</ul>
+<hr>
+<h2 id="補足gifで確認したい場合">補足：GIFで確認したい場合</h2>
+<p><img src="/images/git-rebase-steps.gif" alt="git rebase steps"></p>
+<hr>
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li><code>git rebase -i</code> はコミット履歴を整える便利なコマンド</li>
+<li>プルリク前に履歴を読みやすくすると、レビューがスムーズ</li>
+<li>squash, fixup, reword などのキーワードも活用しよう</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

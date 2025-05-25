@@ -1,0 +1,66 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>無関係な下位問題を分離する</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>無関係な下位問題を分離する</h1> <main data-astro-cid-37fxchfa>  <p>複雑な処理を1つの場所に詰め込むと、コードの意図が見えづらくなります。<br>
+この章では「<strong>本質的な処理に集中するために、無関係な下位の問題を分離する</strong>」という考え方を紹介しています。</p>
+<hr>
+<h2 id="本質と下位問題を分ける">本質と下位問題を分ける</h2>
+<p>処理の中には、**“本質”ではないけれど必要な作業（下位問題）**が多く含まれます。<br>
+例：</p>
+<ul>
+<li>ファイルの読み込み</li>
+<li>フォーマットの整形</li>
+<li>文字列のパース</li>
+<li>ログ出力 など</li>
+</ul>
+<p>それらをすべて一箇所に書いてしまうと、<strong>本当に大事な処理が埋もれてしまいます。</strong></p>
+<hr>
+<h2 id="例読みづらいコード">例：読みづらいコード</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> fs</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> require</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"fs"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> fs.</span><span style="color:#B392F0">readFileSync</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"nums.txt"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"utf8"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> numbers</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> data.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">","</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(Number);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> total</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> numbers.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> a </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> b, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> average</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> total </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> numbers.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<p><strong>読み手は、読み込み・分解・計算・平均…と目を右往左往させられます。</strong></p>
+<hr>
+<h2 id="本質を引き立てる書き方">本質を引き立てる書き方</h2>
+<h3 id="-下位問題を関数に切り出す">➤ 下位問題を関数に切り出す：</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> readNumbersFromFile</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">filename</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> data</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> fs.</span><span style="color:#B392F0">readFileSync</span><span style="color:#E1E4E8">(filename, </span><span style="color:#9ECBFF">"utf8"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> data.</span><span style="color:#B392F0">split</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">","</span><span style="color:#E1E4E8">).</span><span style="color:#B392F0">map</span><span style="color:#E1E4E8">(Number);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> calculateAverage</span><span style="color:#E1E4E8">(</span><span style="color:#FFAB70">numbers</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> total</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> numbers.</span><span style="color:#B392F0">reduce</span><span style="color:#E1E4E8">((</span><span style="color:#FFAB70">a</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">b</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">=></span><span style="color:#E1E4E8"> a </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> b, </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  return</span><span style="color:#E1E4E8"> total </span><span style="color:#F97583">/</span><span style="color:#E1E4E8"> numbers.</span><span style="color:#79B8FF">length</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> numbers</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> readNumbersFromFile</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"nums.txt"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">const</span><span style="color:#79B8FF"> average</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> calculateAverage</span><span style="color:#E1E4E8">(numbers);</span></span></code></pre>
+<h3 id="-メリット">✅ メリット</h3>
+<ul>
+<li><strong>何をしているかが一目でわかる</strong></li>
+<li><strong>個々の関数はテストしやすい</strong></li>
+<li><strong>読み手の脳への負荷が減る</strong></li>
+</ul>
+<hr>
+<h2 id="上から下へ本質詳細の構成にする">上から下へ「本質→詳細」の構成にする</h2>
+<p>まず「やりたいこと」を書き、それから下に「どうやってやるか（下位問題）」を定義する構成にすると、<br>
+<strong>読み手は安心して読み進めることができます。</strong></p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// 上から読むだけで概要がつかめる</span></span>
+<span class="line"><span style="color:#B392F0">main</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> numbers</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> readNumbersFromFile</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"nums.txt"</span><span style="color:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#F97583">  const</span><span style="color:#79B8FF"> average</span><span style="color:#F97583"> =</span><span style="color:#B392F0"> calculateAverage</span><span style="color:#E1E4E8">(numbers);</span></span>
+<span class="line"><span style="color:#E1E4E8">  console.</span><span style="color:#B392F0">log</span><span style="color:#E1E4E8">(average);</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D">// 下で詳細を定義</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> readNumbersFromFile</span><span style="color:#E1E4E8">(...) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span>
+<span class="line"><span style="color:#F97583">function</span><span style="color:#B392F0"> calculateAverage</span><span style="color:#E1E4E8">(...) { </span><span style="color:#F97583">...</span><span style="color:#E1E4E8"> }</span></span></code></pre>
+<hr>
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li>本質的でない処理（ファイルI/O、整形など）は「下位問題」として切り出そう</li>
+<li>下位問題を分けることで、本質の意図が明確になる</li>
+<li>コードを「本質→詳細」の順で書くことで、読みやすさと理解のしやすさが大きく向上する</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

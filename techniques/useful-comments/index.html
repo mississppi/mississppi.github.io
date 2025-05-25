@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>コメントすべきことを知る</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>コメントすべきことを知る</h1> <main data-astro-cid-37fxchfa>  <p><strong>コメントは「読めばわかるコード」を補うために存在する</strong>ものであり、<br>
+<strong>「コードから読み取れないこと」こそを説明すべき</strong>です。</p>
+<hr>
+<h2 id="コメントはコードに書けないことを書く">コメントは「コードに書けないこと」を書く</h2>
+<p>コメントは以下のようなことを説明するのに向いています：</p>
+<ul>
+<li><strong>コードの意図</strong>（なぜそう書いたか）</li>
+<li><strong>前提条件</strong>（仮定や制約）</li>
+<li><strong>副作用</strong>（他の状態に影響する処理）</li>
+<li><strong>理由</strong>（一見変なコードに見える理由）</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// バグ回避のために意図的に2倍にしている</span></span>
+<span class="line"><span style="color:#E1E4E8">timeout </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> timeout </span><span style="color:#F97583">*</span><span style="color:#79B8FF"> 2</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<hr>
+<h2 id="何をコメントすべきか">何をコメントすべきか？</h2>
+<p>読み手が「<strong>なぜ？</strong>」「どうしてこの書き方？」と迷いそうな部分は、<br>
+コメントによって意図を補足すると親切です。</p>
+<ul>
+<li>なぜその値にしたのか？</li>
+<li>なぜこの順序で呼ぶのか？</li>
+<li>なぜこの方法を採ったのか？</li>
+<li>なぜ別の方法を使わなかったのか？</li>
+</ul>
+<hr>
+<h2 id="コードをなぞるだけのコメントは不要">コードをなぞるだけのコメントは不要</h2>
+<p>悪いコメントの例：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="js"><code><span class="line"><span style="color:#6A737D">// i を 0 に初期化する</span></span>
+<span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">;</span></span></code></pre>
+<p>こうした「読めばわかる」ことは、コメントしなくても良いです。<br>
+むしろ<strong>ノイズになって可読性を下げます。</strong></p>
+<hr>
+<h2 id="コメントは読者への思いやり">コメントは読者への思いやり</h2>
+<p>良いコメントは、読み手の負担を減らします。</p>
+<ul>
+<li>将来の保守担当者</li>
+<li>他の開発者</li>
+<li>数か月後の自分</li>
+</ul>
+<p>彼らが「なぜこの処理があるのか」を理解するための、<strong>最小限のヒント</strong>になるように意識しましょう。</p>
+<hr>
+<h2 id="まとめ">まとめ</h2>
+<ul>
+<li>
+<p>コメントすべきでないこと：<strong>ひどいコードや読みにくい処理は、まずコードを修正すべきであり、コメントで補うべきではない</strong></p>
+</li>
+<li>
+<p>記録すべき自分の考え：<strong>たとえば定数値の根拠など、背景の判断材料は残しておくと良い</strong></p>
+</li>
+<li>
+<p>読み手の立場になって考える：</p>
+<ul>
+<li><strong>読み手が「えっ？」と思うような処理や副作用は、きちんと文書化する</strong></li>
+<li><strong>ファイルやクラスの先頭には全体像がわかる説明コメントを</strong></li>
+<li><strong>細部の読みすぎを防ぐために、コードブロック単位に意図を補足する</strong></li>
+</ul>
+</li>
+<li>
+<p>コメントは「コードに書けないこと」を書く</p>
+</li>
+<li>
+<p>なぜそう書いたのか？ という意図や背景を補足する</p>
+</li>
+<li>
+<p>コードをなぞるだけのコメントは不要</p>
+</li>
+<li>
+<p>未来の読み手にとって意味のある内容を意識する</p>
+</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
