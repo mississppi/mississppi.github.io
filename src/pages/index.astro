@@ -17,6 +17,15 @@ const gits_sorted = gits.sort((a, b) => a.data.order - b.data.order); // 章順�
     ))}
   </ul>
 
+  <h1>HTTPの振り返り</h1>
+  <ul>
+    {sorted.map((item) => (
+      <li>
+        <a href={`/techniques/${item.slug}`}>{item.data.title}</a>
+      </li>
+    ))}
+  </ul>
+
   <h1>gitで困ったら</h1>
   <ul>
     {gits_sorted.map((item) => (

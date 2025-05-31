@@ -1,0 +1,142 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>HTTP Cookieの基本</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>HTTP Cookieの基本</h1> <main data-astro-cid-37fxchfa>  <h2 id="cookieとは">Cookieとは？</h2>
+<p>Cookieは、<strong>Webブラウザがサーバーから受け取って保存し、次回以降のリクエストに自動で付与する仕組み</strong>です。<br>
+主にセッション管理、ユーザー識別、トラッキングなどに使われます。</p>
+<hr>
+<h2 id="cookieの構造">Cookieの構造</h2>
+<p>レスポンスの <code>Set-Cookie</code> ヘッダーでサーバーから送られます。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Set-Cookie: session_id=abc123; Path=/; HttpOnly; Secure; Max-Age=3600</span></span></code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>属性名</th><th>説明</th></tr></thead><tbody><tr><td><code>session_id=abc123</code></td><td>キーと値（名前と値）</td></tr><tr><td><code>Path=/</code></td><td>Cookieを送信するパスの指定</td></tr><tr><td><code>HttpOnly</code></td><td>JavaScriptでアクセスできないようにする（XSS対策）</td></tr><tr><td><code>Secure</code></td><td>HTTPS接続時のみ送信される</td></tr><tr><td><code>Max-Age=3600</code></td><td>Cookieの有効期限（秒）</td></tr></tbody></table>
+<hr>
+<h2 id="cookieの属性とは">Cookieの属性とは？</h2>
+<p>「属性」とは、Cookieの<strong>振る舞いや制限を制御する追加情報</strong>です。<br>
+<code>HttpOnly</code> や <code>Secure</code> など、Cookieをどう扱うべきかブラウザに伝えます。</p>
+<p>属性を「つける or つけない」は、<strong>サーバーが <code>Set-Cookie</code> ヘッダーでコントロール</strong>します。</p>
+<h3 id="例1属性あり">例1（属性あり）:</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="http"><code><span class="line"><span style="color:#85E89D">Set-Cookie</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> session_id=abc123; HttpOnly; Secure; Max-Age=3600</span></span></code></pre>
+<p>この場合は以下のようなルールが働きます：</p>
+<ul>
+<li>JavaScriptからアクセスできない</li>
+<li>HTTPSでのみ送られる</li>
+<li>1時間で失効</li>
+</ul>
+<h3 id="例2属性なし">例2（属性なし）:</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="http"><code><span class="line"><span style="color:#85E89D">Set-Cookie</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> session_id=abc123</span></span></code></pre>
+<p>最低限の制限のみで送られるため、セキュリティリスクが増します。</p>
+<h3 id="-まとめ">✅ まとめ</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>誰が設定する？</th><th>何を設定する？</th><th>目的</th></tr></thead><tbody><tr><td>サーバー</td><td>Cookieの属性</td><td>安全性・制限・寿命などを制御</td></tr><tr><td>ブラウザ</td><td>属性に従って送信</td><td>次回のリクエスト時に自動で送る</td></tr></tbody></table>
+<hr>
+<h2 id="リクエスト時の動作">リクエスト時の動作</h2>
+<p>ブラウザは、保存されたCookieを<strong>自動的に対象サーバーへ送信</strong>します：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Cookie: session_id=abc123</span></span></code></pre>
+<hr>
+<h2 id="実務での活用例">実務での活用例</h2>
+<ul>
+<li>ログインセッションの保持（セッションクッキー）</li>
+<li>ABテストやユーザー識別</li>
+<li>ショッピングカートの状態保持</li>
+</ul>
+<hr>
+<h2 id="よくある注意点">よくある注意点</h2>
+<ul>
+<li><code>HttpOnly</code> を設定しないと、XSSでCookieが盗まれる可能性あり</li>
+<li><code>Secure</code> を設定しないと、HTTP通信時に盗まれる可能性あり</li>
+<li><code>SameSite</code> 属性を指定しないと、クロスサイトリクエスト（CSRF）攻撃の対象になりやすい</li>
+</ul>
+<hr>
+<h2 id="cookieの属性一覧">Cookieの属性一覧</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>属性</th><th>説明</th></tr></thead><tbody><tr><td><code>Expires</code> / <code>Max-Age</code></td><td>有効期限</td></tr><tr><td><code>Domain</code></td><td>Cookieを送信するドメイン</td></tr><tr><td><code>Path</code></td><td>Cookieを送信するパス</td></tr><tr><td><code>Secure</code></td><td>HTTPS限定</td></tr><tr><td><code>HttpOnly</code></td><td>JSから読み取れない</td></tr><tr><td><code>SameSite</code></td><td>クロスサイト制限 (<code>Lax</code>, <code>Strict</code>, <code>None</code>)</td></tr></tbody></table>
+<hr>
+<h2 id="cookieとセッションの関係">Cookieとセッションの関係</h2>
+<p>多くのWebアプリでは、<strong>セッションIDをCookieで保持</strong>し、サーバーがそのIDに基づいてユーザー状態を管理します。</p>
+<hr>
+<h2 id="補足">補足</h2>
+<ul>
+<li><code>Set-Cookie</code> は <strong>レスポンスヘッダー</strong></li>
+<li><code>Cookie</code> は <strong>リクエストヘッダー</strong></li>
+<li><code>localStorage</code> や <code>sessionStorage</code> とは用途・性質が異なる</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
