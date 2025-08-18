@@ -1,0 +1,30 @@
+---
+// 動的ルートの基本構成
+import { getCollection, getEntryBySlug } from 'astro:content';
+import { Markdown } from 'astro/components';
+import ReadableLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('rulesofproggraming');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const entry = await getEntryBySlug('rulesofproggraming', slug);
+
+if (!entry) {
+  throw new Error(`記事が見つかりません: ${slug}`);
+}
+
+const { Content } = await entry.render();
+
+const post = await getEntryBySlug('rulesofproggraming', slug);
+if (!post) throw new Error(`Post not found: ${slug}`);
+
+---
+
+<ReadableLayout title={post.data.title}>
+  <Content />
+</ReadableLayout>

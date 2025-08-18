@@ -2,15 +2,31 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getCollection } from 'astro:content';
 const techniques = await getCollection('techniques');
-const sorted = techniques.sort((a, b) => a.data.order - b.data.order); // 章順に並べる（optional）
+const techniques_sorted = techniques.sort((a, b) => a.data.order - b.data.order); // 章順に並べる（optional）
 
 const gits = await getCollection('git');
 const gits_sorted = gits.sort((a, b) => a.data.order - b.data.order); // 章順に並べる（optional）
+
+const https = await getCollection('http');
+const https_sorted = https.sort((a, b) => a.data.order - b.data.order); // 章順に並べる（optional）
+
+const rulesofproggraming = await getCollection('rulesofproggraming');
+const rulesofproggraming_sorted = rulesofproggraming.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
+
+const swift = await getCollection('swift');
+const swift_sorted = swift.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
+
+const sql = await getCollection('sql');
+const sql_sorted = sql.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
+
+const docker = await getCollection('docker');
+const docker_sorted = docker.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
+
 ---
 <BaseLayout title="Techcampesinos">
   <h1>読みやすいコード技法集</h1>
   <ul>
-    {sorted.map((item) => (
+    {techniques_sorted.map((item) => (
       <li>
         <a href={`/techniques/${item.slug}`}>{item.data.title}</a>
       </li>
@@ -19,9 +35,9 @@ const gits_sorted = gits.sort((a, b) => a.data.order - b.data.order); // 章順�
 
   <h1>HTTPの振り返り</h1>
   <ul>
-    {sorted.map((item) => (
+    {https_sorted.map((item) => (
       <li>
-        <a href={`/techniques/${item.slug}`}>{item.data.title}</a>
+        <a href={`/http/${item.slug}`}>{item.data.title}</a>
       </li>
     ))}
   </ul>
@@ -34,4 +50,41 @@ const gits_sorted = gits.sort((a, b) => a.data.order - b.data.order); // 章順�
       </li>
     ))}
   </ul>
+
+  <h1>ルールズオブプログラミング</h1>
+  <ul>
+    {rulesofproggraming_sorted.map((item) => (
+      <li>
+        <a href={`/rulesofproggraming/${item.slug}`}>{item.data.title}</a>
+      </li>
+    ))}
+  </ul>
+
+  <h1>swift</h1>
+  <ul>
+    {swift_sorted.map((item) => (
+      <li>
+        <a href={`/swift/${item.slug}`}>{item.data.title}</a>
+      </li>
+    ))}
+  </ul>
+
+  <h1>sql</h1>
+  <ul>
+    {sql_sorted.map((item) => (
+      <li>
+        <a href={`/sql/${item.slug}`}>{item.data.title}</a>
+      </li>
+    ))}
+  </ul>
+
+  <h1>docker</h1>
+  <ul>
+    {docker_sorted.map((item) => (
+      <li>
+        <a href={`/docker/${item.slug}`}>{item.data.title}</a>
+      </li>
+    ))}
+  </ul>
+
 </BaseLayout>
