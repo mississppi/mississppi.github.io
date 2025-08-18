@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>Cookieによるセッション管理</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>Cookieによるセッション管理</h1> <main data-astro-cid-37fxchfa>  <h2 id="セッションとは">セッションとは？</h2>
+<p>HTTPは**ステートレス（状態を持たない）**な通信です。<br>
+つまり、ユーザーがログインしても次のリクエストには「誰か」が伝わらない。</p>
+<p>そこで必要になるのが <strong>セッション管理</strong>です。<br>
+セッションでは「一時的なユーザー状態」をサーバー側に保持し、<br>
+クライアントにはその「鍵」となる識別子（セッションID）だけを渡します。</p>
+<hr>
+<h2 id="セッションの一般的な流れ">セッションの一般的な流れ</h2>
+<h3 id="クライアントブラウザの役割">クライアント（ブラウザ）の役割</h3>
+<ul>
+<li>ログイン成功後にサーバーから <code>Set-Cookie</code> で送られるセッションIDを保存する</li>
+<li>以後のリクエストで <code>Cookie</code> ヘッダーにセッションIDを自動送信する</li>
+</ul>
+<h3 id="サーバーの役割">サーバーの役割</h3>
+<ul>
+<li>セッションIDを生成（ランダム文字列など）</li>
+<li>サーバー内にセッション情報を保存（RedisやDB）</li>
+<li>セッションIDを <code>Set-Cookie</code> でクライアントへ返す</li>
+<li>各リクエストでセッションIDを照合し、ユーザー状態を復元</li>
+</ul>
+<hr>
+<h2 id="例初回ログイン時">例：初回ログイン時</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>POST /login</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>→ レスポンス:</span></span>
+<span class="line"><span>Set-Cookie: session_id=abc123; HttpOnly; Secure</span></span></code></pre>
+<p>次のリクエスト以降：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>GET /dashboard</span></span>
+<span class="line"><span>Cookie: session_id=abc123</span></span></code></pre>
+<hr>
+<h2 id="セッション管理のパターン2種">セッション管理のパターン2種</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>種類</th><th>特徴</th></tr></thead><tbody><tr><td>サーバーサイドセッション</td><td>サーバーにユーザー状態を保存する方式。セッションIDだけをクッキーでやり取り。</td></tr><tr><td>クライアントサイドセッション（署名付きクッキー）</td><td>セッション情報自体をCookieに持たせる方式。署名を付けて改ざんを防ぐ。</td></tr></tbody></table>
+<hr>
+<h2 id="署名付きクッキーとは">署名付きクッキーとは？</h2>
+<p>クライアントに「セッションデータ自体」を渡す方式です。<br>
+セキュリティのために、<strong>署名（HMACなど）を付けて改ざんを防止</strong>します。</p>
+<h3 id="例">例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="http"><code><span class="line"><span style="color:#85E89D">Set-Cookie</span><span style="color:#F97583">:</span><span style="color:#9ECBFF"> session=eyJ1c2VyIjoiYWRtaW4ifQ==.signature</span></span></code></pre>
+<ul>
+<li><code>eyJ1c2VyIjoiYWRtaW4ifQ==</code> → Base64エンコードしたJSON（ユーザー情報など）</li>
+<li><code>.signature</code> → サーバーの秘密鍵でHMAC署名した値</li>
+</ul>
+<h3 id="メリット">メリット</h3>
+<ul>
+<li>サーバー側でセッション状態を保存しなくて済む（スケーラブル）</li>
+</ul>
+<h3 id="デメリット">デメリット</h3>
+<ul>
+<li>クッキーサイズ制限に引っかかる可能性（4KB程度）</li>
+<li>クッキーが漏れると情報も一緒に漏れる</li>
+</ul>
+<hr>
+<h2 id="実務での使い分け">実務での使い分け</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>ケース</th><th>選ばれやすい方式</th></tr></thead><tbody><tr><td>セッションデータが大きい</td><td>サーバーサイド方式（例：Redisなど）</td></tr><tr><td>サーバーに状態を持ちたくない</td><td>署名付きクッキー方式（JWTなど）</td></tr></tbody></table>
+<hr>
+<h2 id="補足セキュリティ対策">補足：セキュリティ対策</h2>
+<ul>
+<li><code>HttpOnly</code>, <code>Secure</code>, <code>SameSite</code> 属性を正しく設定</li>
+<li>セッションIDの推測が困難なようにランダム生成</li>
+<li>署名付きクッキーの場合、秘密鍵の安全な管理が必須</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

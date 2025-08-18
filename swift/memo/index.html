@@ -1,0 +1,330 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>くそめも</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>くそめも</h1> <main data-astro-cid-37fxchfa>  <h1 id="swiftui--coredata-めも">SwiftUI &#x26; CoreData めも</h1>
+<p>SwiftUIとCoreDataを使って開発していく中でのメモ。思い出しやすいように、よく使うパターン・お作法をまとめています。</p>
+<hr>
+<h2 id="-onappear-とは">💡 <code>onAppear</code> とは？</h2>
+<p>Viewが画面に表示されたタイミングで何か処理を実行したいときに使う。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="swift"><code><span class="line"><span style="color:#79B8FF">Text</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"Hello"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    .</span><span style="color:#79B8FF">onAppear</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"items"</span><span style="color:#E1E4E8">, items)</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span></code></pre>
+<hr>
+<h2 id="-coredataの使い方">🧠 CoreDataの使い方</h2>
+<h3 id="1-viewcontext-を環境にセット">1. <code>viewContext</code> を環境にセット</h3>
+<p>CoreDataを使うには <code>NSManagedObjectContext</code> を環境に渡しておく。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="swift"><code><span class="line"><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">environment</span><span style="color:#E1E4E8">(\.managedObjectContext, container.viewContext)</span></span></code></pre>
+<h3 id="2-contextの保持">2. Contextの保持</h3>
+<p>ViewModelやViewで使うために定義しておく：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="swift"><code><span class="line"><span style="color:#F97583">private</span><span style="color:#F97583"> let</span><span style="color:#E1E4E8"> context: NSManagedObjectContext</span></span></code></pre>
+<h3 id="3-データ取得nsfetchrequest">3. データ取得：<code>NSFetchRequest</code></h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="swift"><code><span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> request: NSFetchRequest&#x3C;Item> </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> Item.</span><span style="color:#79B8FF">fetchRequest</span><span style="color:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#E1E4E8">request.sortDescriptors </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#79B8FF">    NSSortDescriptor</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">keyPath</span><span style="color:#E1E4E8">: \Item.createdAt, </span><span style="color:#79B8FF">ascending</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span></code></pre>
+<h4 id="-nsfetchrequestitem-の構成">🔍 <code>NSFetchRequest&#x3C;Item></code> の構成</h4>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>要素</th><th>内容</th></tr></thead><tbody><tr><td>Entity</td><td>どのエンティティを対象にするか → <code>Item</code></td></tr><tr><td>並び順</td><td><code>sortDescriptors</code></td></tr><tr><td>条件</td><td><code>predicate</code></td></tr><tr><td>件数制限</td><td><code>fetchLimit</code></td></tr></tbody></table>
+<hr>
+<h2 id="-viewmodelのお作法">🧩 ViewModelのお作法</h2>
+<p>MVVMの基本。データとUIの責務を分離する。</p>
+<h3 id="-viewmodelとは">✅ ViewModelとは？</h3>
+<ul>
+<li><strong>データとロジック</strong>の置き場</li>
+<li>Viewはあくまで表示と操作のみを書く</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="swift"><code><span class="line"><span style="color:#E1E4E8">📦 ViewModel</span></span>
+<span class="line"><span style="color:#F97583">├─</span><span style="color:#E1E4E8"> データ保持（tasks）</span></span>
+<span class="line"><span style="color:#F97583">├─</span><span style="color:#E1E4E8"> CoreData操作（fetch, add, delete）</span></span>
+<span class="line"><span style="color:#F97583">└─</span><span style="color:#E1E4E8"> 状態変化を </span><span style="color:#F97583">@Published</span><span style="color:#E1E4E8"> で通知</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">🖼️ View</span></span>
+<span class="line"><span style="color:#F97583">├─</span><span style="color:#F97583"> @StateObject</span><span style="color:#E1E4E8"> で ViewModel を持つ</span></span>
+<span class="line"><span style="color:#F97583">├─</span><span style="color:#E1E4E8"> 表示（List）</span></span>
+<span class="line"><span style="color:#F97583">└─</span><span style="color:#E1E4E8"> UI操作（ボタン）</span><span style="color:#F97583">→</span><span style="color:#E1E4E8"> ViewModelの関数を呼ぶ</span></span></code></pre>
+<hr>
+<h2 id="️-enumの使い方">🗂️ <code>enum</code>の使い方</h2>
+<h3 id="-ポイントまとめ">✅ ポイントまとめ</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>要素</th><th>内容</th></tr></thead><tbody><tr><td>enum名</td><td>意味のある名詞 → <code>TaskIcon</code>（タスク用アイコン）</td></tr><tr><td>case</td><td>状態や種類を表す → <code>.delete</code>, <code>.done(Bool)</code></td></tr><tr><td>computed property</td><td>見た目の制御に使う → <code>systemName</code>, <code>color</code></td></tr><tr><td>switch文</td><td>各状態で処理を分岐</td></tr></tbody></table>
+<hr>
+<h2 id="️-クロージャclosure">⚙️ クロージャ（Closure）</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="swift"><code><span class="line"><span style="color:#F97583">let</span><span style="color:#E1E4E8"> value </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> { </span><span style="color:#F97583">return</span><span style="color:#79B8FF"> 42</span><span style="color:#E1E4E8"> }()</span></span></code></pre>
+<h3 id="-覚え方">✅ 覚え方</h3>
+<blockquote>
+<p>「この関数、すぐ実行してその値くれ！」</p>
+</blockquote>
+<hr>
+<h2 id="-nssortdescriptor-のおさらい">🌀 <code>NSSortDescriptor</code> のおさらい</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>項目</th><th>内容</th></tr></thead><tbody><tr><td>所属</td><td>Foundation（Objective-C由来）</td></tr><tr><td>用途</td><td>CoreData、NSArray、NSFetchRequestなど</td></tr><tr><td>Swiftでの役割</td><td>CoreDataのクエリでの並び替えに必須</td></tr><tr><td>代替</td><td><code>sorted {}</code> を使うのも可（ただし非効率なことも）</td></tr></tbody></table>
+<hr>
+<h2 id="-sheetitem-の仕組み">📱 <code>.sheet(item:)</code> の仕組み</h2>
+<ul>
+<li><code>Identifiable</code> なオブジェクトを渡すことで、<code>sheet</code> を表示する形式。</li>
+<li><code>nil → 非nil</code> になった瞬間に <code>sheet</code> が表示される。</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="swift"><code><span class="line"><span style="color:#E1E4E8">.</span><span style="color:#79B8FF">sheet</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">item</span><span style="color:#E1E4E8">: $editingTask) { task </span><span style="color:#F97583">in</span></span>
+<span class="line"><span style="color:#6A737D">    // 編集用のビューなど</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<blockquote>
+<p>※ <code>Item</code> は <code>Identifiable</code> に準拠している（CoreDataではデフォルト）</p>
+</blockquote>
+<hr>
+<h2 id="-state-ってなに">🧬 <code>@State</code> ってなに？</h2>
+<blockquote>
+<p>SwiftUIにおける「画面の状態」を保持するためのプロパティラッパー。</p>
+</blockquote>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="swift"><code><span class="line"><span style="color:#F97583">@State</span><span style="color:#F97583"> private</span><span style="color:#F97583"> var</span><span style="color:#E1E4E8"> name: </span><span style="color:#79B8FF">String</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> ""</span></span></code></pre>
+<ul>
+<li>ユーザー操作で変わる値に使う</li>
+<li>値が変わると画面が自動的に再描画される</li>
+</ul>
+<h3 id="-使用例">✅ 使用例</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="swift"><code><span class="line"><span style="color:#79B8FF">TextField</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"名前"</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">text</span><span style="color:#E1E4E8">: $name)</span></span>
+<span class="line"><span style="color:#79B8FF">Text</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"こんにちは、</span><span style="color:#9ECBFF">\(name)</span><span style="color:#9ECBFF">さん！"</span><span style="color:#E1E4E8">)</span></span></code></pre>
+<hr>
+<h2 id="-状態のやりとりの図解">🔁 状態のやりとりの図解</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>@State var name</span></span>
+<span class="line"><span>   ↓</span></span>
+<span class="line"><span>$name（Binding）</span></span>
+<span class="line"><span>   ↓</span></span>
+<span class="line"><span>子Viewの @Binding var name</span></span></code></pre>
+<p>→ 親Viewから子Viewに状態を渡すときの基本パターン。</p>
+<hr>
+<h2 id="initとは">init()とは</h2>
+<p>View が作られるタイミングで最初に1回だけ呼ばれる特別な関数です。</p>
+<h2 id="initとstateobjectのお作法">initとstateobjectのお作法</h2>
+<p>initで初期化するのがお作法</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>struct MyView: View {</span></span>
+<span class="line"><span>    @StateObject var viewModel: MyViewModel</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    init() {</span></span>
+<span class="line"><span>        _viewModel = StateObject(wrappedValue: MyViewModel())</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="よく使うソートの書き方">よく使う「ソート」の書き方</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>return logs.sorted { ($0.date ?? .distantPast) > ($1.date ?? .distantPast) }</span></span></code></pre>
+<p>✅ .distantPast ってなに？
+Swift の Date 型が持ってる めっちゃ昔の日付（紀元前レベル）。</p>
+<p>「ログの配列を、date の値（または昔の日）で比較して、新しい順に並べて返してる」</p>
+<p>✅ 応用ポイント
+sorted { $0.name ?? "" &#x3C; $1.name ?? "" } → 名前順にも使える</p>
+<p>filter や map と組み合わせるとさらに便利</p>
+<h2 id="navigationlink">NavigationLink</h2>
+<p>次の画面に行くためのボタン</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>✅ 最小の例</span></span>
+<span class="line"><span>swift</span></span>
+<span class="line"><span>コピーする</span></span>
+<span class="line"><span>編集する</span></span>
+<span class="line"><span>NavigationLink("次へ") {</span></span>
+<span class="line"><span>    Text("これは遷移先の画面です")</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="reactに例えながら値の更新通知について">reactに例えながら値の更新通知について</h2>
+<p>@Publisedをつけると、値の更新時に通知されるようになる</p>
+<p>@ObservedObjectは親Viewから渡されるこれを監視する</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>    @ObservedObject var habit: Habit</span></span></code></pre>
+<h1 id="日付処理で覚えておくこと">日付処理で覚えておくこと</h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>覚えるべき</th><th>内容</th><th>SwiftUI / iOSでの具体例</th></tr></thead><tbody><tr><td>① 日付の生成</td><td>今日、月初などのDateを作る</td><td><code>Date()</code>, <code>Calendar.current.date(...)</code></td></tr><tr><td>② 日付の比較</td><td>同じ日？今日？未来？</td><td><code>Calendar.current.isDate(_:inSameDayAs:)</code></td></tr><tr><td>③ 日付の整形</td><td>表示用の文字列</td><td><code>DateFormatter().string(from:)</code></td></tr><tr><td>④ 範囲の取得</td><td>月の日数、週の範囲など</td><td><code>calendar.range(of: .day, in: .month, for:)</code></td></tr></tbody></table>
+<p>意識しておくと今後楽になる</p>
+<h2 id="dismissとは">dismissとは</h2>
+<p>SwiftUI で用意されている 環境変数の1つで、
+シート（.sheet）やポップオーバーなどで表示された画面を 閉じる処理として使います。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Button("保存") {</span></span>
+<span class="line"><span>    // データ保存処理...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    dismiss() // ← 表示されている画面（シート）を閉じる</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h1 id="-ミニマム版-persistencecontrollerswift">✅ ミニマム版 PersistenceController.swift</h1>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>struct PersistenceController {</span></span>
+<span class="line"><span>    static let shared = PersistenceController()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    let container: NSPersistentContainer</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    init(inMemory: Bool = false) {</span></span>
+<span class="line"><span>        container = NSPersistentContainer(name: "MealLog") // ← .xcdatamodeld のファイル名と一致させること</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        if inMemory {</span></span>
+<span class="line"><span>            container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        container.loadPersistentStores { _, error in</span></span>
+<span class="line"><span>            if let error = error as NSError? {</span></span>
+<span class="line"><span>                fatalError("Core Data store failed: \(error), \(error.userInfo)")</span></span>
+<span class="line"><span>            }</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        container.viewContext.automaticallyMergesChangesFromParent = true</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="delete-rule">Delete Rule</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Delete Rule</th><th>説明</th></tr></thead><tbody><tr><td><strong>Nullify</strong></td><td>リレーション先が削除されても、自分の参照だけ <code>nil</code> にする（安全でよく使う）</td></tr><tr><td><strong>Cascade</strong></td><td>リレーション先が削除されたら、自分自身も削除される（子が親に依存しているときに使う）</td></tr><tr><td><strong>Deny</strong></td><td>リレーション先が使われている限り削除を許さない（削除失敗させたい時）</td></tr><tr><td><strong>No Action</strong></td><td>何もしない（手動管理向け、普通は使わない）</td></tr></tbody></table>
+<h1 id="appファイルからstateobject---environmentobjectで下に渡すってのはお作法">Appファイルから@StateObject -> .environmentObjectで下に渡すってのはお作法</h1>
+<p>ViewModelはこうやって渡すのがお作法。毎回viewmodelが生成されるため。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// Appファイル</span></span>
+<span class="line"><span>@main</span></span>
+<span class="line"><span>struct MyApp: App {</span></span>
+<span class="line"><span>    @StateObject var viewModel = MyViewModel()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    var body: some Scene {</span></span>
+<span class="line"><span>        WindowGroup {</span></span>
+<span class="line"><span>            ContentView()</span></span>
+<span class="line"><span>                .environmentObject(viewModel)</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// 子ビュー</span></span>
+<span class="line"><span>struct ContentView: View {</span></span>
+<span class="line"><span>    @EnvironmentObject var viewModel: MyViewModel</span></span>
+<span class="line"><span>    ...</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Appで定義</span></span>
+<span class="line"><span>|</span></span>
+<span class="line"><span>|- .environmentObjectに渡してあげる</span></span>
+<span class="line"><span>|-- ContentView</span></span>
+<span class="line"><span>|--- @EnvironmentObjectで受け取れる</span></span></code></pre>
+<hr>
+<h2 id="設計---エラーハンドリング">設計 - エラーハンドリング</h2>
+<h3 id="1-失敗しそうな操作は適切に伝える">1. 失敗しそうな操作は「適切に伝える」</h3>
+<p>意識: エラーが発生する可能性があるなら、黙殺しない。必ず呼出元にその事実を伝える。
+実装: エラー/失敗の可能性を型で明示することもある</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Optional</span></span>
+<span class="line"><span>Result&#x3C;Success, Failuer></span></span>
+<span class="line"><span>Result&#x3C;[None], DataServiceError></span></span></code></pre>
+<h3 id="2-エラーは最も適切に処理できる場所でキャッチをする">2. エラーは「最も適切に処理できる場所」でキャッチをする</h3>
+<p>意識: エラー発生場所で全て処理しない。最も有意義に解釈しできて回復もでき、ユーザへ情報を提供できるレイヤーまで伝搬させることもある
+MVVM: 低レベル層はカスタムエラーを変換、中間層はカスタムエラーをキャッチ。UI層は通知する。</p>
+<h3 id="3-エラーの種類に応じた適切な対応をする">3. エラーの種類に応じた適切な対応をする</h3>
+<p>意識: ユーザにどう伝えるか、アプリとしてどう回復継続するか
+やること: 回復可能ならユーザの再試行を促す、デフォルト値を使う。不能なら安全に終了を促す。ログを出す。</p>
+<h3 id="4-エラーはなるべく早く発見なるべく早く伝える">4. エラーはなるべく早く発見、なるべく早く伝える</h3>
+<p>意識: 問題が起きたらすぐにそれを意識し、コード上の適切な場所でエラーとして表現する
+やること: 早期リターンを徹底する</p>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

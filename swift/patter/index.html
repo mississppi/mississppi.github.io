@@ -1,0 +1,152 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>MVCでパターン解説</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>MVCでパターン解説</h1> <main data-astro-cid-37fxchfa>  <h2 id="observerパターン">Observerパターン:</h2>
+<p>ViewがControllerを監視している構造</p>
+<h3 id="コントローラ">コントローラ:</h3>
+<p>@Publishedをつけて監視したい情報を設定</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>class TaskController: ObservableObject {</span></span>
+<span class="line"><span>    @Published var tasks: [Task] = []</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="view側で">view側で</h3>
+<p>コントローラを呼ぶ際に@StateObjectで呼ぶ</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>@StateObject private var controller = TaskController()</span></span></code></pre>
+<hr>
+<h2 id="strategyパターン">Strategyパターン</h2>
+<p>とにかく条件でロジックなどを切り替えたい場合に使う</p>
+<p>用意するもの</p>
+<ol>
+<li>インタフェースProtocol</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>protocol TaskViewStorategy {</span></span>
+<span class="line"><span>    func render(task: Task) -> AnyView</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<ol start="2">
+<li>viewを複数</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>struct CompactViewStorategy: TaskViewStorategy {</span></span>
+<span class="line"><span>    func render(task: Task) -> AnyView {</span></span>
+<span class="line"><span>        AnyView (</span></span>
+<span class="line"><span>            Text(task.title)</span></span>
+<span class="line"><span>                .font(.body)</span></span>
+<span class="line"><span>        )</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<ol start="3">
+<li>切替ロジック</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>func toggleViewStrategy() {</span></span>
+<span class="line"><span>    print("toggled")</span></span>
+<span class="line"><span>    print(viewStrategy)</span></span>
+<span class="line"><span>    if viewStrategy is CompactViewStorategy {</span></span>
+<span class="line"><span>        viewStrategy = DetailedViewStorategy()</span></span>
+<span class="line"><span>    } else {</span></span>
+<span class="line"><span>        viewStrategy = CompactViewStorategy()</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<hr>
+<h2 id="factoryパターンとバリデーション設計の導入記録">Factoryパターンとバリデーション設計の導入記録</h2>
+<h3 id="このパターンは">このパターンは</h3>
+<p>生成の責務を分けたい時に使う
+.createとかでカプセルか</p>
+<h3 id="今回の構成">今回の構成</h3>
+<p>factory</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>struct TaskFactory {</span></span>
+<span class="line"><span>    static let rules: [TitleValidationRule] = [</span></span>
+<span class="line"><span>        NotEmptyRule()</span></span>
+<span class="line"><span>    ]</span></span>
+<span class="line"><span>    static func create(title: String, content: String) -> Result&#x3C;Task, ValidationError> {</span></span>
+<span class="line"><span>        let errors = rules</span></span>
+<span class="line"><span>            .filter { !$0.validate(title) }</span></span>
+<span class="line"><span>            .map { $0.errorMessage }</span></span>
+<span class="line"><span>        </span></span>
+<span class="line"><span>        guard errors.isEmpty else {</span></span>
+<span class="line"><span>            return .failure(ValidationError(messages: errors))</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>        </span></span>
+<span class="line"><span>        return .success(Task(title: title, content: content))</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="バリデーションの-ルール">バリデーションの ルール</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>struct NotEmptyRule: TitleValidationRule {</span></span>
+<span class="line"><span>    let errorMessage = "タイトルを入力してください。"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    func validate(_ title: String) -> Bool {</span></span>
+<span class="line"><span>        !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<h3 id="一緒にバリデーションの設計もした">一緒にバリデーションの設計もした</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>protocol TitleValidationRule {</span></span>
+<span class="line"><span>    func validate(_ title: String) -> Bool</span></span>
+<span class="line"><span>    var errorMessage: String { get }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="4-result型とエラーハンドリング">4. Result型とエラーハンドリング</h3>
+<p>とにかくResult型を使うならお作法</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>struct ValidationError: Error {</span></span>
+<span class="line"><span>    let messages: [String]</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="コントローラ側で分けて使える">コントローラ側で分けて使える</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>switch TaskFactory.create(title: title, content: content) {</span></span>
+<span class="line"><span>case .success(let task):</span></span>
+<span class="line"><span>    tasks.append(task)</span></span>
+<span class="line"><span>    errorMessages = []</span></span>
+<span class="line"><span>case .failure(let error):</span></span>
+<span class="line"><span>    errorMessages = error.messages</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="commandパターン使ってみた">commandパターン使ってみた</h2>
+<p>用意するものは4つ</p>
+<p>プロトコル</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>protocol RequestCommand {</span></span>
+<span class="line"><span>    func execute()</span></span>
+<span class="line"><span>    func cancel()</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>それを継承した本体。実体？</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>final class CurlCommand: RequestCommand {</span></span>
+<span class="line"><span>    private var task: Task&#x3C;Void, Never>?</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    func execute() {</span></span>
+<span class="line"><span>        guard task == nil else {return}</span></span>
+<span class="line"><span>        task = Task {</span></span>
+<span class="line"><span>            while !Task.isCancelled {</span></span>
+<span class="line"><span>                await CurlRunner.shared.sendRequest()</span></span>
+<span class="line"><span>                try? await Task.sleep(nanoseconds: 10 * 1_000_000_000)</span></span>
+<span class="line"><span>            }</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    func cancel() {</span></span>
+<span class="line"><span>        task?.cancel()</span></span>
+<span class="line"><span>        task = nil</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>Task は非同期処理のためのスレッド的なもの。開始・終了を明示的に管理できる</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Task {} ・・・即実行</span></span>
+<span class="line"><span>task.cencel() ・・・停止</span></span></code></pre>
+<p>やりたい処理、今回はcurlでリクエスト</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>import Foundation</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>final class CurlRunner {</span></span>
+<span class="line"><span>    static let shared = CurlRunner()</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    private init() {}</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    func sendRequest() async {</span></span>
+<span class="line"><span>        print("Sending request...")</span></span>
+<span class="line"><span>        let process = Process()</span></span>
+<span class="line"><span>        process.executableURL = URL(fileURLWithPath: "/usr/bin/curl")</span></span>
+<span class="line"><span>        process.arguments = ["https://mississppi.github.io/"]</span></span>
+<span class="line"><span>        </span></span>
+<span class="line"><span>        do {</span></span>
+<span class="line"><span>            try process.run()</span></span>
+<span class="line"><span>            process.waitUntilExit()</span></span>
+<span class="line"><span>        } catch {</span></span>
+<span class="line"><span>            print("failed to run curl")</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span></code></pre>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

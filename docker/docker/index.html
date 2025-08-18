@@ -1,0 +1,178 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>Docker</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>Docker</h1> <main data-astro-cid-37fxchfa>  <h2 id="docke-コマンド">docke コマンド</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>//run</span></span>
+<span class="line"><span>docker run イメージ</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//run - port</span></span>
+<span class="line"><span>docker run -p 80:80 -d httpd</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//run - apache - 80port</span></span>
+<span class="line"><span>docker run --name my_apache -p 80:80 -d httpd</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//run - mysql - env</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//レイヤー確認</span></span>
+<span class="line"><span>docker inspect {{}} イメージ</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//image to file</span></span>
+<span class="line"><span>docker save nginx > nginx.tar</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//file to load</span></span>
+<span class="line"><span>docker load &#x3C; nginx.tar</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//タグで起動。名前もつける</span></span>
+<span class="line"><span>docker run -d --name my-nginx-container my-nginx:v1</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//exec</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//tagが便利な点。</span></span>
+<span class="line"><span>stg, prodとかで切れるから</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//memory, cpu制御して起動</span></span>
+<span class="line"><span>docker run -d --name nginx-limited --memory 256m --cpus 0.5 nginx</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//削除</span></span>
+<span class="line"><span>docker rm nginx-custom</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//envを使って再ビルド</span></span>
+<span class="line"><span>docker build -t my-nginx-env .</span></span>
+<span class="line"><span>docker build -t polyglot-whale .</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//レイヤーをhistoryで確認したい。</span></span>
+<span class="line"><span>docker build コンテナ名</span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="dockerfile">Dockerfile</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>//ENVを設定</span></span>
+<span class="line"><span>ENV WHALE_LANGUAGE="English"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//COPYをする</span></span>
+<span class="line"><span>COPY entrypoint.sh /entrypoint.sh</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//権限を与える</span></span>
+<span class="line"><span>RUN chmod +x /entrypoint.sh</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//echoでhellowolrd</span></span>
+<span class="line"><span>CMD ["echo",  "Hello, World!"]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//pipinstallしてみる</span></span>
+<span class="line"><span>RUN pip install --no-cache-dir -r requirements.txt</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span></code></pre>
+<p>##　マルチステージビルド</p>
+<h3 id="ゴミが含まれないベストプラクティス">ゴミが含まれない、ベストプラクティス</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># Build stage</span></span>
+<span class="line"><span># ここは設定だけ</span></span>
+<span class="line"><span>FROM python:3.9-slim AS builder</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>WORKDIR /app</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>COPY requirements.txt .</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>RUN pip install --user --no-cache-dir -r requirements.txt</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Final stage</span></span>
+<span class="line"><span># ここが実際に使われる</span></span>
+<span class="line"><span>FROM python:3.9-slim</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>WORKDIR /app</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Copy only the installed packages from the builder stage</span></span>
+<span class="line"><span>COPY --from=builder /root/.local /root/.local</span></span>
+<span class="line"><span>COPY app.py .</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ENV PATH=/root/.local/bin:$PATH</span></span>
+<span class="line"><span>ENV ENVIRONMENT=production</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>CMD ["python", "app.py"]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>EXPOSE 5000</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>LABEL maintainer="Your Name &#x3C;your.email@example.com>"</span></span>
+<span class="line"><span>LABEL version="1.0"</span></span>
+<span class="line"><span>LABEL description="Flask app demo with multi-stage build"</span></span></code></pre>
+<h2 id="他にも高度な-dockrefile-の使い方">他にも高度な Dockrefile の使い方</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>//ユーザ作成</span></span>
+<span class="line"><span>RUN useradd -m appuser</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//色々入れる。あとapt キャッシュを削減</span></span>
+<span class="line"><span>RUN apt-get update &#x26;&#x26; apt-get install -y curl &#x26;&#x26; rm -rf /var/lib/apt/lists/*</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//Python バージョンを動的に決定</span></span>
+<span class="line"><span>RUN PYTHON_VERSION=$(python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")') &#x26;&#x26; ...</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//マルチステージビルド</span></span>
+<span class="line"><span>COPY --from=builder /root/.local/lib/python3.9/site-packages "${SITE_PACKAGES_PATH}"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//実行ファイルをコピー</span></span>
+<span class="line"><span>COPY --from=builder /root/.local/bin /home/appuser/.local/bin</span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="dockerignore-で不要なファイルを除外">.dockerignore で不要なファイルを除外</h2>
+<h2 id="network-を作成">network を作成</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>//作成 custom bridge create</span></span>
+<span class="line"><span>docker network create --driver bridge my-network</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//一覧</span></span>
+<span class="line"><span>docker network ls</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//コンテナ立ててネットワークに接続</span></span>
+<span class="line"><span>docker run --name container1 --network my-network -d nginx</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//ネットワークへ接続</span></span>
+<span class="line"><span>docker network connect my-network2 container2</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//切断</span></span>
+<span class="line"><span>docker network disconnect my-network2 container2</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//ネットワークに接続されてるコンテナがあるか確認</span></span>
+<span class="line"><span>docker network inspect my-network2</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//netowrk削除</span></span>
+<span class="line"><span>docker network rm my-network2</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//同ネットワークエイリアス上にコンテナ作成</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="volume">volume</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span>
+<span class="line"><span>//volume作成</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//volume ls</span></span>
+<span class="line"><span>docker volume ls</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//volume mountでコンテナを起動</span></span>
+<span class="line"><span>docker run -d --name my_container -v my_data:/app/data ubuntu:latest sleep infinity</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//backupを取るためにコンテナを削除する</span></span>
+<span class="line"><span>docker rm my_container</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//backupするときに一時的なコンテナを使うのが良い</span></span>
+<span class="line"><span>//Dockerボリューム（my_data）の中身をホスト側のディレクトリにバックアップ</span></span>
+<span class="line"><span>docker run --rm -v my_data:/source:ro -v $(pwd):/backup ubuntu tar cvf /backup/my_data_backup.tar -C /source.</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//</span></span>
+<span class="line"><span>docker run -d --name volume_mounter -v data_volume:/app alpine sh -c "echo 'Hello, Docker volumes.' > /app/hello.txt &#x26;&#x26; tail -f /dev/null"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="kubanetes">kubanetes</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>//clusterの状態確認</span></span>
+<span class="line"><span>kubectl cluster-info</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//クラスタが正常起動してるか確認する。1. クラスタのノードを確認</span></span>
+<span class="line"><span>kubectl get nodes</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//2.  すべてのポッドの状態を確認 でもいい</span></span>
+<span class="line"><span>kubectl get pods --all-namespaces</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>//cluster up (minikube)</span></span>
+<span class="line"><span>minikube start</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span></code></pre>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

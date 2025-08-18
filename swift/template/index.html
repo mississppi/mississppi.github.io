@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>テンプレ</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>テンプレ</h1> <main data-astro-cid-37fxchfa>  <h1 id="よく使う">よく使う</h1>
+<p>100本ノックで使ってるもの</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Formatter+Extensions.swift</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>import Foundation</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>extension DateFormatter {</span></span>
+<span class="line"><span>    static let trackDate: DateFormatter = {</span></span>
+<span class="line"><span>        let f = DateFormatter()</span></span>
+<span class="line"><span>        f.dateStyle = .medium</span></span>
+<span class="line"><span>        f.timeStyle = .none</span></span>
+<span class="line"><span>        return f</span></span>
+<span class="line"><span>    }()</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>PersistenceController</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>import CoreData</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>struct PersistenceController {</span></span>
+<span class="line"><span>    static let shared = PersistenceController()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    let container: NSPersistentContainer</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    init(inMemory: Bool = false) {</span></span>
+<span class="line"><span>        container = NSPersistentContainer(name: "MusicLog") // ← .xcdatamodeld のファイル名と一致させること</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        if inMemory {</span></span>
+<span class="line"><span>            container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        container.loadPersistentStores { _, error in</span></span>
+<span class="line"><span>            if let error = error as NSError? {</span></span>
+<span class="line"><span>                fatalError("Core Data store failed: \(error), \(error.userInfo)")</span></span>
+<span class="line"><span>            }</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        container.viewContext.automaticallyMergesChangesFromParent = true</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>ルートでviewmodelをinitして渡す。</span></span>
+<span class="line"><span>とにかく@StateObjectで作れば大丈夫！！</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>import SwiftUI</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>@main</span></span>
+<span class="line"><span>struct ShoppingListApp: App {</span></span>
+<span class="line"><span>    let persistenceController = PersistenceController.shared</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    @StateObject private var shoppingListViewModel: ShoppingListViewModel</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    init() {</span></span>
+<span class="line"><span>        let context = persistenceController.container.viewContext</span></span>
+<span class="line"><span>        _shoppingListViewModel = StateObject(wrappedValue: ShoppingListViewModel(context: context))</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    var body: some Scene {</span></span>
+<span class="line"><span>        WindowGroup {</span></span>
+<span class="line"><span>            ContentView()</span></span>
+<span class="line"><span>                .environment(\.managedObjectContext, persistenceController.container.viewContext)</span></span>
+<span class="line"><span>                .environmentObject(shoppingListViewModel)</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

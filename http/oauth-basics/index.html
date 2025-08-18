@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>OAuth 2.0 超入門</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>OAuth 2.0 超入門</h1> <main data-astro-cid-37fxchfa>  <h1 id="-oauth-20-超入門">🔐 OAuth 2.0 超入門</h1>
+<p>OAuth（オーオース）は「<strong>第三者があなたの代わりにサービスを使うための仕組み</strong>」です。<br>
+例: 「Twitterでログイン」「Googleカレンダーに予定を書き込む」など。</p>
+<hr>
+<h2 id="-oauthって何のためにあるの">🤝 OAuthって何のためにあるの？</h2>
+<ul>
+<li>自分の<strong>IDとパスワードを直接渡さずに</strong>、他のサービスにアクセスさせるための仕組み。</li>
+<li>アクセス権を<strong>トークンとして一時的に貸し出す</strong>ことで、安全に連携できる。</li>
+</ul>
+<hr>
+<h2 id="-oauthの流れauthorization-code-flow">🔁 OAuthの流れ（Authorization Code Flow）</h2>
+<h3 id="登場人物">登場人物</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>誰？</th><th>役割</th></tr></thead><tbody><tr><td>リソースオーナー</td><td>あなた（ユーザー）</td></tr><tr><td>クライアント</td><td>連携アプリ（例: ToDoアプリ）</td></tr><tr><td>認可サーバー</td><td>アカウント管理（例: Google）</td></tr><tr><td>リソースサーバー</td><td>データを提供する本体（例: Google Calendar API）</td></tr></tbody></table>
+<h3 id="処理の流れ">処理の流れ</h3>
+<ol>
+<li><strong>クライアントが認可サーバーにリダイレクト</strong>（ログイン画面へ）</li>
+<li>ユーザーが<strong>ログインと許可</strong>をする</li>
+<li>認可サーバーが<strong>認可コード</strong>をクライアントに渡す</li>
+<li>クライアントがそのコードを使って<strong>アクセストークン</strong>を取得</li>
+<li>以後、<strong>アクセストークン</strong>を使ってリソースサーバーにアクセス</li>
+</ol>
+<hr>
+<h2 id="-アクセストークンとリフレッシュトークン">🧾 アクセストークンとリフレッシュトークン</h2>
+<ul>
+<li>アクセストークン: APIにアクセスするための「使い捨てキー」（期限付き）</li>
+<li>リフレッシュトークン: アクセストークンが切れたときに再発行するためのトークン</li>
+</ul>
+<hr>
+<h2 id="-oauthのメリット">✅ OAuthのメリット</h2>
+<ul>
+<li>パスワードを共有しなくていい</li>
+<li>トークンには**スコープ（権限範囲）**を設定できる</li>
+<li>万が一漏れても<strong>トークンだけを無効化</strong>できる</li>
+</ul>
+<hr>
+<h2 id="-注意点">🛑 注意点</h2>
+<ul>
+<li>**認証（誰？）<strong>と</strong>認可（何していい？）**は別物
+<ul>
+<li>OAuthは「認可」がメイン</li>
+<li>ログイン用途には**OpenID Connect（OIDC）**を使うのが一般的（OAuthをベースにした認証の拡張）</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="-まとめ">📚 まとめ</h2>
+<p>OAuthは、<strong>ユーザーが他のサービスに一部のアクセス権を安全に与える仕組み</strong>です。</p>
+<ul>
+<li>実際に自作アプリにログイン機能をつけるときは「OpenID Connect（OIDC）」の実装を検討すると良いです。</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

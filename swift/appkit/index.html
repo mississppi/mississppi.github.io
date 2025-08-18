@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>Storyboard使わないAppkitの開発</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>Storyboard使わないAppkitの開発</h1> <main data-astro-cid-37fxchfa>  <h2 id="お作法">お作法</h2>
+<ol>
+<li>Main.stoaryboardを削除</li>
+<li>buildの設定から設定を削除</li>
+<li>main.swiftを作成</li>
+<li>AppDelegate.swiftを編集</li>
+</ol>
+<h3 id="mainswiftを作成">main.swiftを作成</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>import Cocoa</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>let appDelegate = AppDelegate()</span></span>
+<span class="line"><span>NSApplication.shared.delegate = appDelegate</span></span>
+<span class="line"><span>NSApplication.shared.run()</span></span></code></pre>
+<h3 id="appdelegateswiftを編集">AppDelegate.swiftを編集</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>import Cocoa</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>class AppDelegate: NSObject, NSApplicationDelegate {</span></span>
+<span class="line"><span>    var window: NSWindow!</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    func applicationDidFinishLaunching(_ notification: Notification) {</span></span>
+<span class="line"><span>        window = NSWindow(</span></span>
+<span class="line"><span>            contentRect: NSMakeRect(0, 0, 400, 300),</span></span>
+<span class="line"><span>            styleMask: [.titled, .closable, .resizable],</span></span>
+<span class="line"><span>            backing: .buffered,</span></span>
+<span class="line"><span>            defer: false</span></span>
+<span class="line"><span>        )</span></span>
+<span class="line"><span>        window.center()</span></span>
+<span class="line"><span>        window.title = "Blank Window"</span></span>
+<span class="line"><span>        window.makeKeyAndOrderFront(nil)</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {</span></span>
+<span class="line"><span>        return true</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="selectboxをいちから構築">selectboxをいちから構築</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>インスタンスを作成</span></span>
+<span class="line"><span>let popupButton = NSPopUpButton()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>選択肢を追加</span></span>
+<span class="line"><span>popupButton.addItems(withTitles: ["Swift", "Python", "C"])</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>イベントハンドラを登録する</span></span>
+<span class="line"><span>popupButton.target = self</span></span>
+<span class="line"><span>popupButton.action = #selector(languageSelected(_:))</span></span>
+<span class="line"><span>//action: 実行したい関数を #selector(...) で指定</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>4. 対応する関数を定義する</span></span>
+<span class="line"><span>@objc func languageSelected(_ sender: NSPopUpButton) {</span></span>
+<span class="line"><span>    let selected = sender.titleOfSelectedItem ?? ""</span></span>
+<span class="line"><span>    print("選ばれた言語: \(selected)")</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="loadview-viewdidloadについて">loadView, viewDidLoadについて</h2>
+<p>loadView: 1回のみ
+viewDidLoad: viewが構築されるたびに呼ばれる</p>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

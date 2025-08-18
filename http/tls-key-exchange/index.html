@@ -1,0 +1,66 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>TLSの鍵交換のしくみ</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>TLSの鍵交換のしくみ</h1> <main data-astro-cid-37fxchfa>  <h1 id="-tlsの鍵交換のしくみやさしく解説">🔐 TLSの鍵交換のしくみ（やさしく解説）</h1>
+<p>HTTPSでは、通信内容を守るために「共通鍵暗号」を使って通信します。<br>
+ただしその共通鍵を<strong>安全にやりとりする</strong>のが課題でした。<br>
+そこで使われるのが「<strong>公開鍵暗号</strong>」と「<strong>プレマスターシークレット</strong>」です。</p>
+<hr>
+<h2 id="-共通鍵ってなに">🔑 共通鍵ってなに？</h2>
+<ul>
+<li>実際の通信では「共通鍵暗号方式（AESなど）」でデータを暗号化します。</li>
+<li><strong>送信者と受信者が同じ鍵を持っていないと通信できません</strong>。</li>
+</ul>
+<p>でも、「じゃあその共通鍵ってどうやって共有するの？」という問題が出てきます。</p>
+<hr>
+<h2 id="-プレマスターシークレットとは">🧪 プレマスターシークレットとは？</h2>
+<ul>
+<li>クライアント（ブラウザ）が<strong>ランダムな値（乱数）を生成</strong>します。</li>
+<li>これは **共通鍵を導き出すための「材料」**です。</li>
+<li>これを「プレマスターシークレット」と呼びます。</li>
+</ul>
+<hr>
+<h2 id="-鍵交換の流れrsa方式の場合">🔐 鍵交換の流れ（RSA方式の場合）</h2>
+<ol>
+<li>ブラウザがプレマスターシークレットを生成</li>
+<li>それを<strong>サーバーの公開鍵</strong>で暗号化して送信</li>
+<li>サーバーが<strong>自分の秘密鍵</strong>で復号</li>
+<li>クライアントとサーバーが同じ「プレマスターシークレット」を持つ</li>
+<li>双方がこの値と他の情報（乱数など）をもとに「共通鍵（セッション鍵）」を生成</li>
+<li>以後の通信はこの共通鍵で<strong>暗号化通信</strong></li>
+</ol>
+<hr>
+<h2 id="-用語まとめ">🎯 用語まとめ</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>用語</th><th>意味</th></tr></thead><tbody><tr><td>プレマスターシークレット</td><td>共通鍵を作るための材料となる乱数（クライアント側で生成）</td></tr><tr><td>公開鍵</td><td>サーバーがみんなに公開している鍵（暗号化に使う）</td></tr><tr><td>秘密鍵</td><td>サーバーがこっそり持ってる鍵（復号に使う）</td></tr><tr><td>共通鍵（セッション鍵）</td><td>双方が同じ値を持つ暗号化用の鍵。これで通信を暗号化する</td></tr></tbody></table>
+<hr>
+<h2 id="-なぜ安全なの">🔒 なぜ安全なの？</h2>
+<ul>
+<li>共通鍵そのものを送らないので、盗まれる心配がない</li>
+<li>公開鍵で暗号化してるので、盗聴者には中身がわからない</li>
+<li>結果として、安全に暗号通信が始められる！</li>
+</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

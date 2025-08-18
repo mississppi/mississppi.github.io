@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>サブクエリの使い方：FROM句 vs WHERE句</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>サブクエリの使い方：FROM句 vs WHERE句</h1> <main data-astro-cid-37fxchfa>  <p>SQLでサブクエリを書くとき、「FROMに書く派」「WHEREに書く派」で分かれることがあります。<br>
+それぞれの使いどころや考え方を整理しておきましょう。</p>
+<hr>
+<h2 id="-from句-vs-where句使い分けの比較表">✅ FROM句 vs WHERE句：使い分けの比較表</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>観点</th><th>FROM句サブクエリ</th><th>WHERE句サブクエリ</th></tr></thead><tbody><tr><td>主な用途</td><td>集計やデータ構造の再編成</td><td>条件のフィルタリングや存在チェック</td></tr><tr><td>返す結果</td><td>テーブル（複数列・複数行）</td><td>単一の値、またはブール判定（EXISTSなど）</td></tr><tr><td>読みやすさ</td><td>構造が見やすく、中間処理の明示に向く</td><td>ネストが深くなると読みにくいが短く書ける</td></tr><tr><td>パフォーマンス</td><td>CTEやJOINと併用でき、インデックス活用の余地がある</td><td>実行計画次第ではパフォーマンスに注意が必要</td></tr><tr><td>よく使う例</td><td>仮想テーブルを作って再利用する</td><td>平均値や存在チェックで単発使用</td></tr></tbody></table>
+<hr>
+<h2 id="-from句サブクエリテーブルとして扱いたいとき">📌 FROM句サブクエリ（テーブルとして扱いたいとき）</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">SELECT</span><span style="color:#E1E4E8"> dept, avg_salary</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span><span style="color:#E1E4E8"> department </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> dept, </span><span style="color:#79B8FF">AVG</span><span style="color:#E1E4E8">(salary) </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> avg_salary</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> employees</span></span>
+<span class="line"><span style="color:#F97583">  GROUP BY</span><span style="color:#E1E4E8"> department</span></span>
+<span class="line"><span style="color:#E1E4E8">) </span><span style="color:#F97583">AS</span><span style="color:#E1E4E8"> dept_avg;</span></span></code></pre>
+<ul>
+<li>中間的な集計結果を構造化できる</li>
+<li>JOINやさらにフィルタを加えやすい</li>
+<li>再利用したいデータ構造に便利</li>
+</ul>
+<hr>
+<h2 id="-where句サブクエリ値や条件に使いたいとき">📌 WHERE句サブクエリ（値や条件に使いたいとき）</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="sql"><code><span class="line"><span style="color:#F97583">SELECT</span><span style="color:#F97583"> name</span></span>
+<span class="line"><span style="color:#F97583">FROM</span><span style="color:#E1E4E8"> employees</span></span>
+<span class="line"><span style="color:#F97583">WHERE</span><span style="color:#E1E4E8"> salary </span><span style="color:#F97583">></span><span style="color:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#F97583">  SELECT</span><span style="color:#79B8FF"> AVG</span><span style="color:#E1E4E8">(salary)</span></span>
+<span class="line"><span style="color:#F97583">  FROM</span><span style="color:#E1E4E8"> employees</span></span>
+<span class="line"><span style="color:#E1E4E8">);</span></span></code></pre>
+<ul>
+<li>単純な比較に強い</li>
+<li>EXISTS、IN、=、> などの条件に使う</li>
+<li>ネストが深くなると注意</li>
+</ul>
+<hr>
+<h2 id="-実務的な使い分けのヒント">📝 実務的な使い分けのヒント</h2>
+<ul>
+<li>中間処理が複雑 → <strong>FROM句</strong> を使って読みやすさ重視</li>
+<li>単純な条件判定 → <strong>WHERE句</strong> を使って簡潔に</li>
+<li>ネストが深くなりすぎないように注意（特にWHERE句）</li>
+<li><strong>JOINよりもパフォーマンスに差が出ることもあるので、EXPLAINで確認するのも◎</strong></li>
+</ul>
+<hr>
+<h2 id="-結論">🔚 結論</h2>
+<p>どちらが「正解」ということではなく、<strong>意図・構造・読みやすさ・パフォーマンス</strong>を総合して判断するのがベストです。</p>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

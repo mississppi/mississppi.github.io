@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>mysql</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>mysql</h1> <main data-astro-cid-37fxchfa>  <p>わざわざググらないよう基本構文</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>INSERT INTO テーブル名 (列1, 列2, ...)</span></span>
+<span class="line"><span>VALUES (値1, 値2, ...);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>UPDATE テーブル名</span></span>
+<span class="line"><span>SET 列1 = 値1, 列2 = 値2, ...</span></span>
+<span class="line"><span>WHERE 条件;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>DELETE FROM テーブル名</span></span>
+<span class="line"><span>WHERE 条件;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>CREATE USER 'new_user'@'localhost' IDENTIFIED BY 'my_password';</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span></code></pre>
+<p>サンプル - 販売実績ダッシュボード</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>SELECT</span></span>
+<span class="line"><span>    category,</span></span>
+<span class="line"><span>    COUNT(DISTINCT product_name) as unique_products,</span></span>
+<span class="line"><span>    COUNT(*) as total_transactions,</span></span>
+<span class="line"><span>    SUM(quantity) as total_quantity,</span></span>
+<span class="line"><span>    ROUND(AVG(quantity), 1) as avg_quantity_per_sale,</span></span>
+<span class="line"><span>    ROUND(MIN(unit_price), 2) as min_price,</span></span>
+<span class="line"><span>    ROUND(MAX(unit_price), 2) as max_price,</span></span>
+<span class="line"><span>    ROUND(SUM(quantity * unit_price), 2) as total_revenue</span></span>
+<span class="line"><span>FROM sales</span></span>
+<span class="line"><span>GROUP BY category</span></span>
+<span class="line"><span>ORDER BY total_revenue DESC;</span></span></code></pre>
+<p>・各カテゴリないのユニークな商品をカウントする。DISTINCT
+・包括的な売上
+・MAX、MIN、平均</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>SELECT</span></span>
+<span class="line"><span>    region,</span></span>
+<span class="line"><span>    COUNT(DISTINCT category) as categories_sold,</span></span>
+<span class="line"><span>    COUNT(DISTINCT product_name) as unique_products,</span></span>
+<span class="line"><span>    SUM(quantity) as total_quantity,</span></span>
+<span class="line"><span>    ROUND(SUM(quantity * unit_price), 2) as total_revenue,</span></span>
+<span class="line"><span>    ROUND(SUM(quantity * unit_price) / SUM(quantity), 2) as avg_price_per_unit</span></span>
+<span class="line"><span>FROM sales</span></span>
+<span class="line"><span>GROUP BY region</span></span>
+<span class="line"><span>HAVING total_revenue > 1000</span></span>
+<span class="line"><span>ORDER BY total_revenue DESC;</span></span></code></pre>
+<p>・販売地域でグループ化
+・合計収益、数量
+・収益を数量で割った
+・HAVING は少ない地域をフィルタイング</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>SELECT</span></span>
+<span class="line"><span>    sale_date,</span></span>
+<span class="line"><span>    COUNT(DISTINCT category) as categories_sold,</span></span>
+<span class="line"><span>    COUNT(DISTINCT product_name) as unique_products,</span></span>
+<span class="line"><span>    COUNT(*) as transactions,</span></span>
+<span class="line"><span>    SUM(quantity) as total_quantity,</span></span>
+<span class="line"><span>    ROUND(SUM(quantity * unit_price), 2) as daily_revenue,</span></span>
+<span class="line"><span>    ROUND(AVG(quantity * unit_price), 2) as avg_transaction_value</span></span>
+<span class="line"><span>FROM sales</span></span>
+<span class="line"><span>GROUP BY sale_date</span></span>
+<span class="line"><span>ORDER BY sale_date;</span></span></code></pre>
+<p>・日次のトレンド分析</p>
+<h2 id="インデックス再確認">インデックス再確認</h2>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>インデックスが貼られている</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>MariaDB [lab_db]> explain select * from users where username='john_doe';</span></span>
+<span class="line"><span>+------+-------------+-------+------+---------------+--------------+---------+-------+------+-----------------------+</span></span>
+<span class="line"><span>| id   | select_type | table | type | possible_keys | key          | key_len | ref   | rows | Extra                 |</span></span>
+<span class="line"><span>+------+-------------+-------+------+---------------+--------------+---------+-------+------+-----------------------+</span></span>
+<span class="line"><span>|    1 | SIMPLE      | users | ref  | idx_username  | idx_username | 767     | const | 1    | Using index condition |</span></span>
+<span class="line"><span>+------+-------------+-------+------+---------------+--------------+---------+-------+------+-----------------------+</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>インデックス貼られてない！</span></span>
+<span class="line"><span>MariaDB [lab_db]> explain select * from users where city = 'New York';</span></span>
+<span class="line"><span>+------+-------------+-------+------+---------------+------+---------+------+------+-------------+</span></span>
+<span class="line"><span>| id   | select_type | table | type | possible_keys | key  | key_len | ref  | rows | Extra       |</span></span>
+<span class="line"><span>+------+-------------+-------+------+---------------+------+---------+------+------+-------------+</span></span>
+<span class="line"><span>|    1 | SIMPLE      | users | ALL  | NULL          | NULL | NULL    | NULL | 3    | Using where |</span></span>
+<span class="line"><span>+------+-------------+-------+------+---------------+------+---------+------+------+-------------+</span></span>
+<span class="line"><span>1 row in set (0.000 sec)</span></span></code></pre>
+<p>mysqldump</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>sudo mysqldump -u root mydatabase > /home/labex/backup/mydatabase_backup.sql</span></span></code></pre>
+<p>特定のテーブル</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span></span></span></code></pre>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2025 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
