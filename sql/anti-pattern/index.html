@@ -1,11 +1,12 @@
 <!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>アンチパターンまとめ</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
 </style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>アンチパターンまとめ</h1> <main data-astro-cid-37fxchfa>  <h1 id="1-ジェイウォーク">1. ジェイウォーク</h1>
 <h2 id="アンチパターン-ひとつのカラムにカンマ区切りで複数入れてしまう">アンチパターン: ひとつのカラムにカンマ区切りで複数入れてしまう</h2>
-<p>やりたいこと: 多対 1 の関連を作りたい。例) 製品、アカウント
+<p>やりたいこと: 多対 1 の関連を作りたい。例) 製品、アカウント<br>
 解決策: 交差テーブルを作る。</p>
+<hr>
 <h1 id="2-ナイーブツリー">2. ナイーブツリー</h1>
 <h2 id="アンチパターン-常に親の-id-のみに依存する">アンチパターン: 常に親の ID のみに依存する</h2>
-<p>やりたいこと: 階層構造を格納したい。クエリを実行する
+<p>やりたいこと: 階層構造を格納したい。クエリを実行する<br>
 解決策: 複数ある</p>
 <p>・経路モデル</p>
 
@@ -30,8 +31,8 @@
 
 <table><thead><tr><th>comment_id</th><th>path</th><th>発言者</th></tr></thead><tbody><tr><td>1</td><td>1/</td><td>aa</td></tr><tr><td>2</td><td>1/2/</td><td>bb</td></tr></tbody></table>
 <p>・入れ子集合モデル</p>
-<p>lft（左値）と rgt（右値）を使う。
-ツリーを**深さ優先探索（Depth-First Search）**で走査。
+<p>lft（左値）と rgt（右値）を使う。<br>
+ツリーを**深さ優先探索（Depth-First Search）**で走査。<br>
 ノードを順番に基づいて値を割り当て。</p>
 
 
@@ -76,64 +77,86 @@
 <table><thead><tr><th>comment_id</th><th>path</th><th>発言者</th></tr></thead><tbody><tr><td>書類</td><td>1</td><td>12</td></tr><tr><td>企画書</td><td>2</td><td>7</td></tr><tr><td>企画書 A</td><td>3</td><td>4</td></tr><tr><td>企画書 B</td><td>5</td><td>6</td></tr><tr><td>報告書</td><td>8</td><td>11</td></tr><tr><td>月次報告書</td><td>9</td><td>10</td></tr></tbody></table>
 <p>・閉包モデル</p>
 <p>テーブルを 2 つ使う。</p>
-<p>メインテーブル:
+<p>メインテーブル:<br>
 閉包テーブル:</p>
+<hr>
 <h1 id="3-id-リクワイアド">3. ID リクワイアド</h1>
 <h2 id="アンチパターン-全部のテーブルに自動採番の-id-を割り振ること脳死">アンチパターン: 全部のテーブルに自動採番の ID を割り振ること。脳死</h2>
 <p>解決策: ナチュラルキーの採用</p>
+<hr>
 <h1 id="4-キーレスエントリ">4. キーレスエントリ</h1>
 <p>##　アンチパターン: 外部キー制約を使わない</p>
-<p>やりたいこと: 簡単にテーブルを作りたい
+<p>やりたいこと: 簡単にテーブルを作りたい<br>
 解決策: 外部キー制約を使う。サロゲートキー</p>
+<hr>
 <h1 id="5-eav">5. EAV</h1>
+<hr>
 <h1 id="6-プロミスキャスアソシエーション">6. プロミスキャス・アソシエーション</h1>
-<p>やりたいこと: 複数の親テーブルを参照する
-アンチパターン: 外部キーを宣言しない。複数に紐付けられる
+<p>やりたいこと: 複数の親テーブルを参照する<br>
+アンチパターン: 外部キーを宣言しない。複数に紐付けられる<br>
 解決策：複数外部キーの使用、共通の親テーブルを作成するなど</p>
+<hr>
 <h1 id="7-マルチカラムアトリビュート">7. マルチカラムアトリビュート</h1>
 <p>やりたいこと：同じカテゴリに属するデータを複数個格納したい場合。<br>
-例) users テーブルに phone カラムが 3 つある(自宅、携帯、FAX)
+例) users テーブルに phone カラムが 3 つある(自宅、携帯、FAX)<br>
 解決策: 従属テーブルを作成する。user_phone_numbers</p>
+<hr>
 <h1 id="9-フロートデータ型をしようする">9. フロートデータ型をしようする</h1>
-<p>やりたいこと: 正確な数値の格納をしたい
-アンチパターン:FLOAT 型を使う。
+<p>やりたいこと: 正確な数値の格納をしたい<br>
+アンチパターン:FLOAT 型を使う。<br>
 解決策: NUMELIC を使う</p>
+<hr>
 <h1 id="10-サーティーワンフレーバー">10. サーティーワンフレーバー</h1>
-<p>やりたいこと: ENUM をつかってデータ格納したい
-アンチパターン: 限定してしまう
+<p>やりたいこと: ENUM をつかってデータ格納したい<br>
+アンチパターン: 限定してしまう<br>
 解決策: 参照テーブルを作成</p>
+<hr>
 <h1 id="11-ファントムファイル">11. ファントムファイル</h1>
-<p>やりたいこと: 画像などメディア系を扱いたい
-アンチパターン: 脳死で S3 とかを使う
+<p>やりたいこと: 画像などメディア系を扱いたい<br>
+アンチパターン: 脳死で S3 とかを使う<br>
 解決策: BLOB で保存するか、外部参照するか。物議。</p>
+<hr>
 <h1 id="12-インデックスショットガン">12. インデックスショットガン</h1>
+<hr>
 <h1 id="13-ふぃあおぶじあんのうん">13. ふぃあおぶじあんのうん</h1>
-<p>やりたいこと:
-アンチパターン: NULL に対してクエリを書く。NULL を一般値として扱う。結果 NULL が帰ってきてしまう
+<p>やりたいこと:<br>
+アンチパターン: NULL に対してクエリを書く。NULL を一般値として扱う。結果 NULL が帰ってきてしまう<br>
 解決策: NOTNULL.</p>
+<hr>
 <h1 id="14-アンビギュアスグループ">14. アンビギュアス・グループ</h1>
+<hr>
 <h1 id="15-ランダムセレクション">15. ランダムセレクション</h1>
-<p>やりたいこと: ランダムに選ぶ
-アンチパターン: 全テーブルスキャンする
+<p>やりたいこと: ランダムに選ぶ<br>
+アンチパターン: 全テーブルスキャンする<br>
 解決策: offset を利用する。</p>
+<hr>
 <h1 id="16-プアマンズサーチエンジン">16. プアマンズサーチエンジン</h1>
-<p>アンチパターン: like 検索する
+<p>アンチパターン: like 検索する<br>
 解決策: 全文検索を使う</p>
+<hr>
 <h1 id="17-スパゲッティクエリ">17. スパゲッティクエリ</h1>
-<p>アンチパターン: 一目でわからないクエリ
+<p>アンチパターン: 一目でわからないクエリ<br>
 解決策: with 句とか使って分解する</p>
+<hr>
 <h1 id="18-インプリシットカラム">18. インプリシットカラム</h1>
-<p>アンチパターン: insert のときにカラム名を省略する
+<p>アンチパターン: insert のときにカラム名を省略する<br>
 解決策: ちゃんと書く</p>
+<hr>
 <h1 id="19-リーダブルパスワード">19. リーダブルパスワード</h1>
+<hr>
 <h1 id="20-sql-インジェクション">20. SQL インジェクション</h1>
+<hr>
 <h1 id="21-シュードキーニートフリーク">21. シュードキー・ニートフリーク</h1>
-<p>アンチパターン: id の欠番を埋めようとする
+<p>アンチパターン: id の欠番を埋めようとする<br>
 解決策: 埋めない</p>
-<h1 id="2-シーノーエビル">2.. シーノーエビル</h1>
-<p>アンチパターン: 肝心な部分を見落とす。DBAPI を見てない。アプリの SQL しか見てない
+<hr>
+<h1 id="22-シーノーエビル">22. シーノーエビル</h1>
+<p>アンチパターン: 肝心な部分を見落とす。DBAPI を見てない。アプリの SQL しか見てない<br>
 解決策: 一時変数とか使ってクエリを構築してから API に渡す</p>
+<hr>
 <h1 id="24-マジックビーンズ">24. マジックビーンズ</h1>
-<h1 id="25-砂の城">25. 砂の城</h1>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+<hr>
+<h1 id="25-砂の城">25. 砂の城</h1>
+<hr>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
 &copy; 2025 techcampesinos
 <br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
