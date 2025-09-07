@@ -325,6 +325,40 @@ MVVM: 低レベル層はカスタムエラーを変換、中間層はカスタ�
 やること: 回復可能ならユーザの再試行を促す、デフォルト値を使う。不能なら安全に終了を促す。ログを出す。</p>
 <h3 id="4-エラーはなるべく早く発見なるべく早く伝える">4. エラーはなるべく早く発見、なるべく早く伝える</h3>
 <p>意識: 問題が起きたらすぐにそれを意識し、コード上の適切な場所でエラーとして表現する
-やること: 早期リターンを徹底する</p>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+やること: 早期リターンを徹底する</p>
+<hr>
+<p>##　よく使うスタイルについて</p>
+<h3 id=""></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Delete Rule</th><th>説明</th><th>使い方</th></tr></thead><tbody><tr><td><strong>resizable</strong></td><td>View のサイズ調整。適用しない場合、Image は元の画像サイズで表示され、frame モディファイアなどでサイズを変更しようとしても無視されます。</td><td>　 Image(”…”) .resizable()のように使います。</td></tr><tr><td><strong>Cascade</strong></td><td>View のアスペクト比を維持しつつ、サイズを調整する。</td><td>Image(”…”) .resizable() .scaledToFit()のように使います。</td></tr><tr><td><strong>Image のサイズ調整</strong></td><td>Image のサイズを調整する場合、resizable()を最初に適用し、その後に scaledToFit()や scaledToFill()、そして frame モディファイアを連鎖させるのが一般的なパターンです。</td><td>resizable()はサイズ調整の「許可」を与え、scaledToFit()はサイズ調整の「方法」を指示します。両者を組み合わせることで、アイコンや画像が意図したサイズで表示されます。</td></tr><tr><td><strong>No Action</strong></td><td>何もしない（手動管理向け、普通は使わない）</td><td></td></tr></tbody></table>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
 &copy; 2025 techcampesinos
 <br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
