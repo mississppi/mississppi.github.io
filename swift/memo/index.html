@@ -359,6 +359,189 @@ MVVM: 低レベル層はカスタムエラーを変換、中間層はカスタ�
 
 
 
-<table><thead><tr><th>Delete Rule</th><th>説明</th><th>使い方</th></tr></thead><tbody><tr><td><strong>resizable</strong></td><td>View のサイズ調整。適用しない場合、Image は元の画像サイズで表示され、frame モディファイアなどでサイズを変更しようとしても無視されます。</td><td>　 Image(”…”) .resizable()のように使います。</td></tr><tr><td><strong>Cascade</strong></td><td>View のアスペクト比を維持しつつ、サイズを調整する。</td><td>Image(”…”) .resizable() .scaledToFit()のように使います。</td></tr><tr><td><strong>Image のサイズ調整</strong></td><td>Image のサイズを調整する場合、resizable()を最初に適用し、その後に scaledToFit()や scaledToFill()、そして frame モディファイアを連鎖させるのが一般的なパターンです。</td><td>resizable()はサイズ調整の「許可」を与え、scaledToFit()はサイズ調整の「方法」を指示します。両者を組み合わせることで、アイコンや画像が意図したサイズで表示されます。</td></tr><tr><td><strong>No Action</strong></td><td>何もしない（手動管理向け、普通は使わない）</td><td></td></tr></tbody></table>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+<table><thead><tr><th>Delete Rule</th><th>説明</th><th>使い方</th></tr></thead><tbody><tr><td><strong>resizable</strong></td><td>View のサイズ調整。適用しない場合、Image は元の画像サイズで表示され、frame モディファイアなどでサイズを変更しようとしても無視されます。</td><td>　 Image(”…”) .resizable()のように使います。</td></tr><tr><td><strong>Cascade</strong></td><td>View のアスペクト比を維持しつつ、サイズを調整する。</td><td>Image(”…”) .resizable() .scaledToFit()のように使います。</td></tr><tr><td><strong>Image のサイズ調整</strong></td><td>Image のサイズを調整する場合、resizable()を最初に適用し、その後に scaledToFit()や scaledToFill()、そして frame モディファイアを連鎖させるのが一般的なパターンです。</td><td>resizable()はサイズ調整の「許可」を与え、scaledToFit()はサイズ調整の「方法」を指示します。両者を組み合わせることで、アイコンや画像が意図したサイズで表示されます。</td></tr><tr><td><strong>No Action</strong></td><td>何もしない（手動管理向け、普通は使わない）</td><td></td></tr></tbody></table>
+<hr>
+<p>#　 LLM の整理</p>
+<h3 id="-1"></h3>
+<h3 id="ニューラルネットワーク">ニューラルネットワーク</h3>
+<p>ニューロンを模倣した計算モデル
+情報を層で少しずつ変換して処理する。という特徴
+段階的に抽象度を上げながら理解を深めていく。<br>
+LLM は何百層にもなっていて、複雑なパターンが読み取れる</p>
+<h3 id="llm-の進化">LLM の進化</h3>
+<p>2 つの強みで進化してきた。</p>
+<h4 id="1-事前学習-pre-training">1. 事前学習　 Pre-training</h4>
+<p>一般的なルールやパターン。百科事典的な</p>
+<h4 id="2ファインチューニング">2.　ファインチューニング</h4>
+<p>特定の目的に合わせて微調整する。</p>
+<h4 id="llm-の学習について">LLM の学習について</h4>
+<p>自己教師あり学習という方法。ラベルがない。テキストとのものでモデル訓練している。
+また、このモデルをスケールさせればタスク性能も向上するという仮説で GPT-3 くらいまではきていた。</p>
+<h2 id="自然言語処理について">自然言語処理について</h2>
+<p>言葉をコンピュータに理解させる技術のことを指す。これは昔は専用のモデルが必要とされていた。
+近年はそうでもない。汎用 LLM とも言われてきている。</p>
+<h3 id="汎用-llm-について">汎用 LLM について</h3>
+<p>得意なこと</p>
+<p>・テキスト生成
+・質問応答
+・翻訳・ようやく
+・コード生成</p>
+<h2 id="機械学習との違い">機械学習との違い</h2>
+<p>そもそも、「データからルールを自動で学習する」技術。ただデメリット
+・特定のタスクに対して特定のモデル。
+・学習には大量ラベル月データが必要
+・新規タスクは、ゼロからモデル構築</p>
+<p>LLM は全く異なるスタンスとなる。
+・事前学習で得ている言語の一般知識
+・トランファーラーニングによるタスク適応
+・スケーラブルなモデル</p>
+<h3 id="トランスフォーマ">トランスフォーマ</h3>
+<p>LLM は、従来のモデルである RNN, CNN とは別のアテンション概念を使っている。
+Tranformer, Transfor ラーニングで構築。これが根本から違うらし。</p>
+<hr>
+<h1 id="トランスフォーマ-1">トランスフォーマ</h1>
+<p>RNN, LSTM だと長文が文脈保持が難しかったが、並列処理が可能で、単語間の関係も効率的に捉えることができる用になった。</p>
+<h2 id="主要構造">主要構造</h2>
+<p>エンコーダ(BERT が特化)、でこーだ(GPT)、T5(両方)</p>
+<p>##　最大の特徴
+self-attention-mechanism と呼ばれる、各単語の関連を計算する仕組み。
+とにかくこれが文脈を深く理解し、適切なテキスト生成のために欠かせない仕組みとなっている。
+具体的には、入力テキストの各単語が、文中の他の単語とどの程度関連してるか、数値的に計算する。重みを調整することができる。</p>
+<h2 id="attention-の仕組み">Attention の仕組み</h2>
+<p>スケールドットプロダクトアテンションと呼ばれる処理について設名する。</p>
+<p>Query: 注目する単語
+Key: 他単語の情報、比較の対象
+Value: 関連性に基づいて出力される意味情報</p>
+<p>ここからが本題。処理の手順</p>
+<ol>
+<li>クエリとキーの内積計算</li>
+<li>ソフトマックス関数を使う。スコアを確率分布に変換</li>
+<li>vaalue を重み付で加算。ベクトルを出力</li>
+</ol>
+<p>さらにマルチヘッドアテンションを使い強化している。
+これは以下となる</p>
+<ol>
+<li>
+<p>複数の自己注意メカニズムをヘッドを並列に実行
+それぞれのクエリキーバリュー行列を用いる</p>
+</li>
+<li>
+<p>それぞれのヘッドを結合、結合ベクトルを生成</p>
+</li>
+<li>
+<p>最終的に、統合ベクトルを活用して文章を処理</p>
+</li>
+</ol>
+<p>これで単語間の関係を複数の視点から同時に分析できる。高度なことができる。</p>
+<h2 id="時代を築いたモデル">時代を築いたモデル</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>モデル名</th><th>説明</th></tr></thead><tbody><tr><td>BERT Google(2018)</td><td>初のトランスフォーマモデル。Encoder 型。Google 検索</td></tr><tr><td>GPT(OpenAI)</td><td>自己回帰型モデル。文の前方(左側)の文脈のみで次の単語を予測する。</td></tr><tr><td>T5 Google(2020)</td><td>Encoder,Decoder トランスフォーマ。テキスト to テキスト</td></tr></tbody></table>
+<h2 id="現在の-llm-たち特徴">現在の LLM たち。特徴</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>モデル名</th><th>説明</th></tr></thead><tbody><tr><td>Claude4 ファミリー</td><td>—</td></tr><tr><td>Claude4 Opus4 (Anthropic)</td><td>最大 20 万トークン以上の文脈保持、ツール連携、メモリ保持などもできる。用途はコード生成、複数分析のドキュメント処理</td></tr><tr><td>Claude4 Sonnet4</td><td>3.7 の後継。　バランス型。対話型エージェント。FAQ システム。日常業務の要約・分析</td></tr><tr><td>Gemini 2.5 ファミリー</td><td>---</td></tr><tr><td>Gemini2.Pro</td><td>100 マントークン以上の長文文脈処理に対応。数学、化学、コーディングで良き</td></tr><tr><td>Gemini2.5Flash</td><td>ノーマル用途に最適化された。日常的なユースケース</td></tr><tr><td>Llama ファミリー</td><td>---</td></tr><tr><td>Llama4 　 Scout</td><td>Moe 構造。コード生成も。専門レポートのようやく、開発支援 AI</td></tr><tr><td>Mistral/Mixtral(Mistral.ai)</td><td>OSS,MOE 構造。</td></tr><tr><td>CommandR+(Cohere)</td><td>RAG（検索拡張生成)に最適化されたモデル。社内ナレッジ検索、法務・契約レビュー支援</td></tr></tbody></table>
+<h1 id="llm-のトレーニング方法">LLM のトレーニング方法</h1>
+<p>どうやって言葉を理解するのか。
+インプット: ニュース、書籍、web、会話、コードなど.　　
+データセットとも言われる。</p>
+<p>ただしこれらはクリーンな状態のデータにする必要がある
+・スパムの除去
+・html タグの除去
+・絵文字
+・重複データの削除
+・文法ミス、誤字修正</p>
+<p>揺れも問題になる。Normalization する。</p>
+<p>tokenization と呼ばれるが、単語分割する。
+・スペースごとに区切る
+・形態素解析。品詞単位
+・サブワード。よく出現する部分単位で分割</p>
+<p>ただし、バイアスかかるため偏ったデータは好ましくない</p>
+<h2 id="トレーニングステップの概要">トレーニングステップの概要</h2>
+<p>まず膨大なデータと計算資源がいる。具体的には次のステップ</p>
+<ol>
+<li>
+<p>初期化-モデルのパラメータをランダムに設定する<br>
+ランダム初期化、Xaview/Glorot 初期化、He 初期化などがある</p>
+</li>
+<li>
+<p>フォワードプロ派ゲーション-入寮を処理し、予測結果を生成</p>
+</li>
+<li>
+<p>ロス計算-予測結果と正解データの誤差を測定する</p>
+</li>
+<li>
+<p>バックプロ派ゲーション-誤差を下にパラメータ修正する</p>
+</li>
+<li>
+<p>エポックの繰り返し-上記プロセスを何百万回も繰り返す。モデル改善</p>
+</li>
+</ol>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
 &copy; 2025 techcampesinos
 <br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
