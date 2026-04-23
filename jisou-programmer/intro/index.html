@@ -1,6 +1,70 @@
 <!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>自走プログラマ - はじめに</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
 </style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>自走プログラマ - はじめに</h1> <main data-astro-cid-37fxchfa>  <h1 id="自走プログラマ">自走プログラマ</h1>
 <p>「自走プログラマ」の読書メモをここに記載します。</p>
-<h2 id="概要">概要</h2>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+<h2 id="概要">概要</h2>
+<hr>
+<h2 id="11-関数設計">1.1 関数設計</h2>
+<ol>
+<li>関数名は処理内容を想像できる名前にする</li>
+</ol>
+<p>bad</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def item_csv(item):</span></span>
+<span class="line"><span>    with open()</span></span></code></pre>
+<p>best
+・動詞にする例: get_item_list, calc_tax, is_member</p>
+<p>・取得できるものの名刺にする: current_date, as_dict
+ある情報を取得するが明確な場合のみ</p>
+<p>・役割で関数名にする: json_parse
+入出力が想像できるのが重要</p>
+<ol start="2">
+<li>狭い単語使おう</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def fetch_latest_news():</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def calc_tax_including(price):</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def aggregate_sum_price(items):</span></span></code></pre>
+<ol start="3">
+<li>関数名から想像できる型の戻り値を返す</li>
+</ol>
+<p>isならtrue/falseを返そう</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def is_valid(name):</span></span></code></pre>
+<ol start="4">
+<li>副作用のない関数にまとめる</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def is_valid(name):</span></span>
+<span class="line"><span>    ここでは何も書き換えるのはよしましょう</span></span></code></pre>
+<ol start="5">
+<li>意味づけできるまとまりで関数にする</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>商品一覧を読み込む</span></span>
+<span class="line"><span>def read_items():</span></span>
+<span class="line"><span>    with open(...) as f:</span></span>
+<span class="line"><span>        reader = csv.reader(f)</span></span>
+<span class="line"><span>        for row in reader:</span></span>
+<span class="line"><span>            name = row[0]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>買い合せ対象商品の場合True</span></span>
+<span class="line"><span>def is_addon_price(price):</span></span>
+<span class="line"><span>    return price &#x3C; 100</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def main():</span></span>
+<span class="line"><span>    items = read_items()</span></span>
+<span class="line"><span>    for name, price in items:</span></span>
+<span class="line"><span>        if is_addon_price(price)</span></span>
+<span class="line"><span>            print(name)</span></span>
+<span class="line"><span></span></span></code></pre>
+<ol start="6">
+<li>リスト、辞書をデフォルト引数にしない</li>
+</ol>
+<p>bad</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def foo(valus=[]):</span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="11-クラス設計">1.1 クラス設計</h2>
+<h2 id="11-モジュール設計">1.1 モジュール設計</h2>
+<h2 id="11-ユニットテスト">1.1 ユニットテスト</h2>
+<h2 id="11-実装の進め方">1.1 実装の進め方</h2>
+<h2 id="11-レビュー">1.1 レビュー</h2>
+<h2 id=""></h2>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
 &copy; 2026 techcampesinos
 <br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
