@@ -60,6 +60,59 @@
 <p>bad</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def foo(valus=[]):</span></span>
 <span class="line"><span></span></span></code></pre>
+<p>デフォルト引数にすると呼び出す度に値が変わる。
+とにかくリスト、辞書をデフォルト引数にしてはだめ！
+noneにして関数内で空を詰める</p>
+<p>best</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def foo(values=None):</span></span>
+<span class="line"><span>    values = values or []</span></span>
+<span class="line"><span>    values.append("hi")</span></span>
+<span class="line"><span>    return values</span></span></code></pre>
+<ol start="7">
+<li>コレクションを引数にしない。int, strを受け取る</li>
+</ol>
+<p>bad</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def calc_tax_included(item, tax_rate=0.1):</span></span></code></pre>
+<p>毎度itemにキーを持たせないと</p>
+<p>best</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def calc_tax_included(price, tax_rate=0.1):</span></span>
+<span class="line"><span></span></span></code></pre>
+<ol start="8">
+<li>インデックス番号に意味を持たせない</li>
+</ol>
+<p>クラスを使おう</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>@dataclass</span></span>
+<span class="line"><span>class Sale:</span></span>
+<span class="line"><span>    sale_id: int</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def validate_sales(sale):</span></span>
+<span class="line"><span>    if not item_exists(sale.item_id):</span></span>
+<span class="line"><span>        raise...</span></span></code></pre>
+<p>明治でインデックス番号がいるときはenumerateを</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>for n, item in enumerate(items, start=1):</span></span>
+<span class="line"><span>    print()</span></span></code></pre>
+<ol start="9">
+<li>
+<p>関数の引数に可変超引数を乱用しない
+*args, **kargsは乱用しない
+どんな値が来てもいい関数のみにする</p>
+</li>
+<li>
+<p>コメントになぜを書く</p>
+</li>
+</ol>
+<p>・なぜそう書くのかをコメントする
+・なぜこう処理しないのか、の説明と考えてもよし。過去経緯や外部ライブラリの都合で合理的でない処理の時に「なぜこのような処理をしないのか」を書いておく</p>
+<ol start="11">
+<li>コントローラには処理を書かない</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def do something(users):</span></span>
+<span class="line"><span>    """ hogehogeする処理</span></span>
+<span class="line"><span>    複数ユーザんに対してこの関数を行う。</span></span>
+<span class="line"><span>    --の場合に--なので、ユーザのデータを変更する必要がある。</span></span>
+<span class="line"><span>    """</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    # SQL実行回数を減らすため、このループは別関数に分離せず処理する</span></span></code></pre>
 <h2 id="11-クラス設計">1.1 クラス設計</h2>
 <h2 id="11-モジュール設計">1.1 モジュール設計</h2>
 <h2 id="11-ユニットテスト">1.1 ユニットテスト</h2>

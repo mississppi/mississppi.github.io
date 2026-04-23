@@ -87,6 +87,78 @@ def foo(valus=[]):
 
 ```
 
+デフォルト引数にすると呼び出す度に値が変わる。
+とにかくリスト、辞書をデフォルト引数にしてはだめ！
+noneにして関数内で空を詰める
+
+best
+
+```
+def foo(values=None):
+    values = values or []
+    values.append("hi")
+    return values
+```
+
+7. コレクションを引数にしない。int, strを受け取る
+
+bad
+
+```
+def calc_tax_included(item, tax_rate=0.1):
+```
+
+毎度itemにキーを持たせないと
+
+best
+
+```
+def calc_tax_included(price, tax_rate=0.1):
+
+```
+
+8. インデックス番号に意味を持たせない
+
+クラスを使おう
+
+```
+@dataclass
+class Sale:
+    sale_id: int
+
+def validate_sales(sale):
+    if not item_exists(sale.item_id):
+        raise...
+```
+
+明治でインデックス番号がいるときはenumerateを
+
+```
+for n, item in enumerate(items, start=1):
+    print()
+```
+
+9. 関数の引数に可変超引数を乱用しない
+   \*args, \*\*kargsは乱用しない
+   どんな値が来てもいい関数のみにする
+
+10. コメントになぜを書く
+
+・なぜそう書くのかをコメントする
+・なぜこう処理しないのか、の説明と考えてもよし。過去経緯や外部ライブラリの都合で合理的でない処理の時に「なぜこのような処理をしないのか」を書いておく
+
+11. コントローラには処理を書かない
+
+```
+def do something(users):
+    """ hogehogeする処理
+    複数ユーザんに対してこの関数を行う。
+    --の場合に--なので、ユーザのデータを変更する必要がある。
+    """
+
+    # SQL実行回数を減らすため、このループは別関数に分離せず処理する
+```
+
 ## 1.1 クラス設計
 
 ## 1.1 モジュール設計
