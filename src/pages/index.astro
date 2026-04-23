@@ -10,9 +10,6 @@ const gits_sorted = gits.sort((a, b) => a.data.order - b.data.order); // 章順�
 const https = await getCollection('http');
 const https_sorted = https.sort((a, b) => a.data.order - b.data.order); // 章順に並べる（optional）
 
-const rulesofproggraming = await getCollection('rulesofproggraming');
-const rulesofproggraming_sorted = rulesofproggraming.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
-
 const swift = await getCollection('swift');
 const swift_sorted = swift.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
 
@@ -50,15 +47,6 @@ const ai_sorted = ai.sort((a, b) => a.data.order - b.data.order); // 章順に�
     {gits_sorted.map((item) => (
       <li>
         <a href={`/git/${item.slug}`}>{item.data.title}</a>
-      </li>
-    ))}
-  </ul>
-
-  <h1>ルールズオブプログラミング</h1>
-  <ul>
-    {rulesofproggraming_sorted.map((item) => (
-      <li>
-        <a href={`/rulesofproggraming/${item.slug}`}>{item.data.title}</a>
       </li>
     ))}
   </ul>
