@@ -22,6 +22,12 @@ const docker_sorted = docker.sort((a, b) => a.data.order - b.data.order); // 章
 const ai = await getCollection('ai');
 const ai_sorted = ai.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
 
+const python = await getCollection('python');
+const python_sorted = python.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
+
+const jisouProgrammer = await getCollection('jisou-programmer');
+const jisouProgrammer_sorted = jisouProgrammer.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
+
 ---
 <BaseLayout title="Techcampesinos">
   <h1>読みやすいコード技法集</h1>
@@ -83,6 +89,24 @@ const ai_sorted = ai.sort((a, b) => a.data.order - b.data.order); // 章順に�
     {ai_sorted.map((item) => (
       <li>
         <a href={`/ai/${item.slug}`}>{item.data.title}</a>
+      </li>
+    ))}
+  </ul>
+
+  <h1>python</h1>
+  <ul>
+    {python_sorted.map((item) => (
+      <li>
+        <a href={`/python/${item.slug}`}>{item.data.title}</a>
+      </li>
+    ))}
+  </ul>
+
+  <h1>自走プログラマ</h1>
+  <ul>
+    {jisouProgrammer_sorted.map((item) => (
+      <li>
+        <a href={`/jisou-programmer/${item.slug}`}>{item.data.title}</a>
       </li>
     ))}
   </ul>
