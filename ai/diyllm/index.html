@@ -1,0 +1,290 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>つくりながら学ぶ！LLM 自作入門 (Compass Booksシリーズ)</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>つくりながら学ぶ！LLM 自作入門 (Compass Booksシリーズ)</h1> <main data-astro-cid-37fxchfa>  <h1 id="chapter1">Chapter1</h1>
+<h2 id="llm-とは">LLM とは</h2>
+<p>人間のようなテキストを理解、生成、反応するように設計されたニューラルネットワークのこと。
+モデルとデータセットを指す。
+Transformer というアーキテクチャを使っている。</p>
+<p>大枠は機械学習のサブセットとなる。要は内包している。
+この中にディープラーニングがある。3 層構造でニューラルネットワークを使いパターン抽象概念をモデル化する。
+これはディープニューラルネットワークと呼ばれている。
+大規模言語のモデルと、ディープラーニングを使うことで生成 AI というジャンルになっている。</p>
+<p>LLM の最初は事前学習というステップがある。ベースモデルや基盤モデルをつかる。GPT3 とか。
+文中の次の単語の予測をラベルとする、ラベル付けされてないテキストからなる大規模コーパスで事前学習をする
+例)
+input: 吾輩は猫である。名前は
+-> 予測は、まだ　ない　？
+-> 確率で最も高いものを選ぶ</p>
+<h2 id="事前学習とは">事前学習とは</h2>
+<p>穴埋め問題を大量やってもらう。</p>
+<p>例) 今日は良い___です。
+-> モデルは天気とかを予測
+-> 正解と比較して学習</p>
+<p>次に指示に従ったり、分類タスクを実行することで、ラベル付けされたより小さなデータセットでファインチューニングする</p>
+<p>これはテキスト補完、書きかけ文章を完了させることができる。フューショットも対応可能
+ここからさらに訓練ができる、これをファインチューニングと呼ぶ。これはインストラクションと分類の 2 つがある。</p>
+<h2 id="インストラクション">インストラクション</h2>
+<p>input: 以下の文章をようやくしてください
+output: ようやく結果
+-> 指示にした能力を獲得(ChatGPT)</p>
+<h2 id="分類">分類</h2>
+<p>input: スパムメールに該当するか
+output: yes/no
+-> こういうタスクに特化</p>
+<h2 id="trasnformer">Trasnformer</h2>
+<p>ほぼ全ての LLM が Transformer を使っている。</p>
+<p>流れは以下。</p>
+<p>入力テキスト > 前処理(エンコーダに準備) > エンコーダ 入力を受けとりベクトル抽出する。 >
+埋め込み > 部分出力テキスト > 入力テキスト > 前処理ステップ > デコーダ > 出力層</p>
+<p>後継 BERT, GPT では訓練が違うらしい。後ほどちゃんと書く。
+Bert はエンコーダ部分のみ。タスクに強い
+GPT は手 s 吃おに強い。デコーダのみ。予測が次の入力となり出力となる。</p>
+<hr>
+<h1 id="chapter2">Chapter2</h1>
+<h2 id="やること">やること</h2>
+<p>エンコーダーの前の処理を実装する。
+テキストをトークン、サブトークンに分割する。LLM 用にベクトル表現にする
+短編小説をトークン化する。</p>
+<h2 id="単語埋め込み">単語埋め込み</h2>
+<p>LLM などのディープニューラルネットワークは、生テキストをそのまま処理できない。
+埋め込みと言われているが、ベクトル表現にすることで DNN が認識できるようになる。</p>
+<h3 id="データの準備">データの準備</h3>
+<p>・訓練するためのテキストを準備
+・ここのワード、サブトークンに分割すると、ベクトル表現にエンコードできる
+・この本では RAG ではなく、1 語ずつ生成することを学習すること</p>
+<p>・ML では word2vec のような事前学習済みのモデルを利用する。埋め込みに
+・GPT12228 です。次元が。</p>
+<h4 id="テキストをトークン化する">テキストをトークン化する</h4>
+<p>細かいステップで見てみる。
+・入力テキスト
+・トークン化されたテキスト
+・トークン ID
+・トークンうめこみ</p>
+<p>まず文章を特定のルールで分解する</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', raw_text)</span></span>
+<span class="line"><span>preprocessed = [item.strip() for item in preprocessed if item.strip()]</span></span></code></pre>
+<p>これを整数表現に変換する、トークン ID を作成。
+トークン ID にするということは、語彙を構築することである。
+語彙は訓練データセットから構成されている。
+これを使って、トークン ID にマッピング</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>all_words = sorted(set(preprocessed))</span></span>
+<span class="line"><span>vocab_size = len(all_words)</span></span>
+<span class="line"><span>print(vocab_size)</span></span>
+<span class="line"><span>vocab = {token: integer for integer, token in enumerate(all_words)}</span></span></code></pre>
+<h4 id="未知の単語について">未知の単語について</h4>
+<p>語彙に含まれてないとエラーになるのでなんとかする。
+訓練されてないワードは<unk>とかに突っ込む</unk></p>
+<h4 id="chapter2-のサンプルコード">Chapter2 のサンプルコード</h4>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>class SimpleTokenizer2:</span></span>
+<span class="line"><span>    def __init__(self, vocab):</span></span>
+<span class="line"><span>        self.str_to_int = vocab</span></span>
+<span class="line"><span>        self.int_to_str = {i: s for s, i in vocab.items()}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    def encode(self, text):</span></span>
+<span class="line"><span>        preprocessed = re.split(r'([,.?_!"()\']|--|\s)', text)</span></span>
+<span class="line"><span>        preprocessed = [</span></span>
+<span class="line"><span>            item.strip() for item in preprocessed if item.strip()</span></span>
+<span class="line"><span>        ]</span></span>
+<span class="line"><span>        preprocessed = [</span></span>
+<span class="line"><span>            item if item in self.str_to_int</span></span>
+<span class="line"><span>            else "&#x3C;|unk|>" for item in preprocessed</span></span>
+<span class="line"><span>        ]</span></span>
+<span class="line"><span>        ids = [self.str_to_int[s] for s in preprocessed]</span></span>
+<span class="line"><span>        return ids</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    def decode(self, ids):</span></span>
+<span class="line"><span>        text = " ".join([self.int_to_str[i] for i in ids])</span></span>
+<span class="line"><span>        text = re.sub(r'\s([,.?_!"()\'])', r'\1', text)</span></span>
+<span class="line"><span>        return text</span></span></code></pre>
+<h4 id="gpt-のトークナイザについて">GPT のトークナイザについて</h4>
+<p><endoftext>を使っていて<unk>使わない。バイトペアエンコーディングを使っている。</unk></endoftext></p>
+<h3 id="bpe">BPE</h3>
+<p>ChatGPT で利用されいるオリジナルのトークナイザ。
+この本では tiktoken ライブラリを利用する。
+未知の単語が来た場合は、小さなサブワードに分割して対応する。</p>
+<p>例)
+Akwirwier</p>
+<blockquote>
+<p>“Ak”, “w”, “ir”, “w”, ” ”, “ier”</p>
+</blockquote>
+<h3 id="埋め込み">埋め込み</h3>
+<p>埋め込みをするには、入力変数と目的変数のペアを作ること。
+スライディングウィンドウアプローチをつかう。これをサンプリングデータとして利用</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>サンプル</span></span>
+<span class="line"><span>for i in range(1, context_size + 1):</span></span>
+<span class="line"><span>    context = enc_sample[:i]</span></span>
+<span class="line"><span>    desired = enc_sample[i]</span></span>
+<span class="line"><span>    print(context, "-->", desired)</span></span></code></pre>
+<p>###　コードサンプル</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>class GPTDatasetV1(Dataset):</span></span>
+<span class="line"><span>    def __init__(self, txt, tokenizer, max_length, stride):</span></span>
+<span class="line"><span>        self.input_ids = []</span></span>
+<span class="line"><span>        self.target_ids = []</span></span>
+<span class="line"><span>        token_ids = tokenizer.encode(txt)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        for i in range(0, len(token_ids) - max_length, stride):</span></span>
+<span class="line"><span>            input_chunk = token_ids[i:i + max_length]</span></span>
+<span class="line"><span>            target_chunk = token_ids[i + 1: i + max_length + 1]</span></span>
+<span class="line"><span>            self.input_ids.append(torch.tensor(input_chunk))</span></span>
+<span class="line"><span>            self.target_ids.append(torch.tensor(target_chunk))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    def __len__(self):</span></span>
+<span class="line"><span>        return len(self.input_ids)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    def __getitem__(self, idx):</span></span>
+<span class="line"><span>        return self.input_ids[idx], self.target_ids[idx]</span></span></code></pre>
+<h3 id="トークンの埋め込み">トークンの埋め込み</h3>
+<p>最後のステップ。tokenid をベクトル変換する必要がある。埋め込みそうの重みをランダムにする必要もある。これはルックアップ演算が行われる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def sampleprint():</span></span>
+<span class="line"><span>    input_ids = torch.tensor([2,3,5,1])</span></span>
+<span class="line"><span>    vocab_size = 6</span></span>
+<span class="line"><span>    output_size = 3</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    torch.manual_seed(123)</span></span>
+<span class="line"><span>    embedding_layer = torch.nn.Embedding(vocab_size,output_size)</span></span>
+<span class="line"><span>    print(embedding_layer(input_ids))</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># Embed instance</span></span>
+<span class="line"><span>vocab_size = 50257</span></span>
+<span class="line"><span>output_dim = 256</span></span>
+<span class="line"><span>token_embedding_layer = torch.nn.Embedding(vocab_size, output_dim)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># dataloader</span></span>
+<span class="line"><span>    dataloader = create_dataloader_v1(</span></span>
+<span class="line"><span>        raw_text,</span></span>
+<span class="line"><span>        batch_size=8,</span></span>
+<span class="line"><span>        max_length=4,</span></span>
+<span class="line"><span>        stride=4,</span></span>
+<span class="line"><span>        shuffle=False</span></span>
+<span class="line"><span>    )</span></span>
+<span class="line"><span>    data_iter = iter(dataloader)</span></span>
+<span class="line"><span>    inputs, targets = next(data_iter)</span></span>
+<span class="line"><span>    print("Token ids:\n", inputs)</span></span>
+<span class="line"><span>    print("Targets:\n", inputs.shape)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    token_embeddings = token_embedding_layer(inputs)</span></span>
+<span class="line"><span>    print("token embeddings", token_embeddings.shape)</span></span></code></pre>
+<h3 id="単語の位置について">単語の位置について</h3>
+<p>SelfAttention の欠点としてトークン ID の位置、順序とかは関係ないこと。
+これを位置情報を組み込めば助けになる。
+方法は 2 つ。相対と絶対。</p>
+<p>・絶対
+トークンの埋め込みにユニークな値を利用。GPT モデルはこっち。</p>
+<p>・相対
+トークン間がどのくらい離れているか、ということができる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span># position embedding</span></span>
+<span class="line"><span>context_length = max_length</span></span>
+<span class="line"><span>pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)</span></span>
+<span class="line"><span>pos_embeddings = pos_embedding_layer(torch.arange(context_length))</span></span>
+<span class="line"><span>print(pos_embeddings.shape)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>input_embeddings = token_embeddings + pos_embeddings</span></span>
+<span class="line"><span>print("input embeddings:", input_embeddings.shape)</span></span></code></pre>
+<h2 id="まとめ">まとめ</h2>
+<p>入力埋め込みパイプラインは以下となる。</p>
+<p>まず入力テキストが個々のトークンに分割、語彙を使ってトークン ID になる。
+このトークン ID が埋め込みトークンになり位置情報埋め込みが加算される。
+これでメイン層の入力となる。</p>
+<hr>
+<h1 id="chapter3">Chapter3</h1>
+<h1 id="attention">attention</h1>
+<p>このセクションではここの話。
+入力テキスト > 前処理ステップ > Self-Attention(ここ) > 後処理ステップ > 出力テキスト</p>
+<h2 id="self-attention-がない時代の問題点">Self-Attention がない時代の問題点</h2>
+<p>・例えば翻訳をするツールを作っている。
+・RNN を使っていた
+・エンコーダで input を処理
+・デコーダでテキスト生成</p>
+<p>・RNN ではエンコーダで隠れ状態を全体から処理する。よくわからない。隠れ状態。どうやら圧縮表現をエンコードするらしい。とにかく input をメモリに入れる？
+・RNN ではデコーダでこのメモリを元に生成する。
+・RNN では長文だと忘れるという欠点があった。デコーダは直前の値にアクセスできない？これ何かに例えないと</p>
+<h3 id="bahdanau-attention-の登場">Bahdanau Attention の登場</h3>
+<p>2014 年に RNN 用のメカニズム開発。
+・Attention ではデコーダが全ての input にアクセスできることが特徴
+・入力の位置が他の位置との関連性を考慮できることが特徴。注意を払えることができる</p>
+<h3 id="self-とは">Self とは</h3>
+<p>Transhfomer アーキテクチャのすべての LLM の基礎となるもの。self とは 1 つの入力に対して異なる位置を関連づけることで Attention の重みを計算する、と言うことらしい。なんとなくはわかった。</p>
+<h3 id="step1-ウォークスルー-重みを持たない-単純な-self-attention">step1: ウォークスルー 「重みを持たない 単純な　 Self-Attention」</h3>
+<p>・まず重みを持たない Self-Attention を実装する
+・まず概念として SA の目標はコンテキストベクトルを作ることである。その途中で重みを使うことである
+・入力から 3 次元ベクトルのデータを扱っている。とにかくまず各トークンを 3 つの値で表現している。
+・</p>
+<h3 id="サンプル">サンプル</h3>
+<p>テキスト: Your journey begins with one step
+コード:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>import torch</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>inputs = torch.tensor(</span></span>
+<span class="line"><span>    [[0.43, 0.15, 0.89], # Your</span></span>
+<span class="line"><span>     [0.55, 0.87, 0.66], # journey</span></span>
+<span class="line"><span>     [0.57, 0.85, 0.64], # starts</span></span>
+<span class="line"><span>     [0.22, 0.58, 0.33], # with</span></span>
+<span class="line"><span>     [0.77, 0.25, 0.10], # one</span></span>
+<span class="line"><span>     [0.05, 0.80, 0.55] ## step</span></span>
+<span class="line"><span>    ]</span></span>
+<span class="line"><span>)</span></span></code></pre>
+<h3 id="コンテキストベクトル">コンテキストベクトル</h3>
+<p>SA では重要。</p>
+<h3 id="sa-構築の最初のステップはスコアを出すこと">SA 構築の最初のステップは、スコアを出すこと</h3>
+<p>Attention スコアと呼ばれる中間値を計算すること。
+これはトークン同士の関連度を数値すること。
+実際にやることはベクトルの内積計算。大きいほど関連が強い。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>query = inputs[1]</span></span>
+<span class="line"><span>attn_scores_2 = torch.empty(inputs.shape[0])</span></span>
+<span class="line"><span>for i, x_i in enumerate(inputs):</span></span>
+<span class="line"><span>    attn_scores_2[i] = torch.dot(x_i, query)</span></span></code></pre>
+<p>やっていることは、全部かけて足す。これを配列で繰り返す。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[0.43, 0.15, 0.89] * [0.55, 0.87, 0.66] +</span></span>
+<span class="line"><span>[0.55, 0.87, 0.66] * [0.55, 0.87, 0.66] +</span></span>
+<span class="line"><span>[0.57, 0.85, 0.64] * [0.55, 0.87, 0.66] +</span></span>
+<span class="line"><span>[0.22, 0.58, 0.33] * [0.55, 0.87, 0.66] +</span></span>
+<span class="line"><span>[0.77, 0.25, 0.10] * [0.55, 0.87, 0.66] +</span></span>
+<span class="line"><span>[0.05, 0.80, 0.55] * [0.55, 0.87, 0.66]</span></span></code></pre>
+<h3 id="正規化">正規化</h3>
+<p>このスコアを正規化する。ソフトマックス関数を使うことで、極端な値を安定させることができる。
+これをすると重みとなる。
+Attetion の重みの総和が 1 となる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def softmax_native(x):</span></span>
+<span class="line"><span>    return torch.exp(x) / torch.exp(x).sum(dim=0)</span></span></code></pre>
+<p>メリットは常に正の数になること、重みが大きいほど重要度が高いと考えることができる。
+正規化をして 1 にしないと、関連度がわかりにくい。</p>
+<h3 id="step2-全ての入力トークンについて-attention-の重みをつける">step2: 全ての入力トークンについて Attention の重みをつける</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>attn_score = torch.empty(6,6)</span></span>
+<span class="line"><span>for i, x_i in enumerate(inputs):</span></span>
+<span class="line"><span>    for j, x_j in enumerate(inputs):</span></span>
+<span class="line"><span>        attn_score[i, j] = torch.dot(x_i, x_j)</span></span>
+<span class="line"><span>print(attn_score)</span></span></code></pre>
+<p>for 以外のアプローチも大事</p>
+<h3 id="次は訓練可能な重みを持った-self-attention">次は訓練可能な重みを持った Self-Attention</h3>
+<p>Scaled Dot-Product Attention と呼ばれる。
+最初に作ったものとの違いは、特定の入力要素に対応する入力ベクトルの加重和としてコンテキストベクトルを計算する。訓練可能な重み。</p>
+<p>具体的には x に対してクエリ、キー、バリューベクトルを最初に計算する。
+クエリベクトルは、x と重み行列の行列積で出せる</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>x_2 = inputs[1]</span></span>
+<span class="line"><span>d_in = inputs.shape[1]</span></span>
+<span class="line"><span>d_out = 2</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>torch.manual_seed(123)</span></span>
+<span class="line"><span>W_query = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad=False)</span></span>
+<span class="line"><span>W_key = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad=False)</span></span>
+<span class="line"><span>W_value = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad=False)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>query_2 = x_2 @ W_query</span></span>
+<span class="line"><span>key_2 = x_2 @ W_key</span></span>
+<span class="line"><span>value_2 = x_2 @ W_value</span></span>
+<span class="line"><span>print(query_2)</span></span></code></pre>
+<p>クエリ、キー、バリューとして最適化をすることで訓練可能となる。
+重みと重みパラメータは違っている。重みは関連度を図るもの。
+重みパラメータはただのパラメータとなる。</p>
+<p>ここからスコアを計算する</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>keys_2 = keys[1]</span></span>
+<span class="line"><span>attn_score_22 = query_2.dot(keys_2)</span></span>
+<span class="line"><span>print(attn_score_22)</span></span></code></pre>
+<p>最後にコンテキストベクトルを計算する</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>context_vec_2 = attn_weights_2 @ values</span></span>
+<span class="line"><span>print(context_vec_2)</span></span></code></pre>
+<h3 id="恐るなcasualattention-で">恐るな。casualattention で</h3>
+<p>Masked Attention とも呼ばれる。トークンを処理するたびに入力テキストの現在のトークンよりも後ろにある未来のトークンをマスクする。
+input に対して Attention の重みを使ってコンテキストベクトルを計算するときに未来のトークンにアクセス不可にする。</p>
+<h3 id="singleattention">singleattention</h3>
+<h3 id="multiattention">multiattention</h3>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2026 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

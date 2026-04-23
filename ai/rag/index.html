@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>RAG</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>RAG</h1> <main data-astro-cid-37fxchfa>  <h2 id="分類と鄭義">分類と鄭義</h2>
+<p>今でも重要な論文: Retrieval_augmented Generation for Large Language Models: A Survey (arXiv: 2312.10997)</p>
+<ol>
+<li>
+<p>Naive RAG -　最も基本的な RAG
+質問　-> を関連文書を取得しプロンプトに付与 -> LLM で回答
+検索の質がそのまま品質となる。とりま基礎</p>
+</li>
+<li>
+<p>Advanced RAG ー 精度を高める実務アプローチ
+Naive の直列に前処理と後処理が入る。検索命中率と提示根拠の質を底上げ。</p>
+<p>前処理:
+・Query Rewriting: 曖昧質問を検索エンジに強い形に言い換え。
+・Query Routing: 質問をカテゴリ判定して最適インデックスへ振り分け
+・Query Expansion: 同義語・構文違いを補って取りこぼしをへらす</p>
+<p>後処理:
+・Reranking: 並べ直し
+・Summarization: 引用に耐える断片へ整形
+・Fusion: ふくす文書の融合</p>
+</li>
+<li>
+<p>Modular RAG - 部品化の設計で制度を積み上げる
+検索・再ランキング・書き換え・読解・記憶・推論を独立モジュールとして切り出して使う。
+いまはあまり利用され無い。Advanced RAG に取り込まれてリウ</p>
+</li>
+</ol>
+<h2 id="llm-as-a-judge">LLM as a Judge</h2>
+<p>2024 年くらいから LLM での評価も流行ってきた。</p>
+<ol>
+<li>InContext Learning : Score, Yes/No, Pair, 選択肢で指示を LLM に与える</li>
+<li>Model Selection : 評価者としての LLM を選択</li>
+<li>Post_processing: 評価結果を整理、数値化や根拠分の抽出。</li>
+<li>Evaluation:これらをまとめて良し悪し</li>
+</ol>
+<h4 id="パターンがある">パターンがある</h4>
+<h4 id="改善">改善</h4>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2026 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

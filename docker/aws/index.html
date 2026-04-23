@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="ja" data-astro-cid-37fxchfa> <head><meta charset="UTF-8"><title>aws</title><style>body{margin:0;padding:20px;background-color:#fff;color:#000;font-family:MS PGothic,Osaka,sans-serif;font-size:14px}h1[data-astro-cid-37fxchfa],h2[data-astro-cid-37fxchfa],h3[data-astro-cid-37fxchfa]{font-weight:700;border-bottom:1px solid #000;padding-bottom:.25em}a[data-astro-cid-37fxchfa]{color:#00e;text-decoration:underline}a[data-astro-cid-37fxchfa]:visited{color:purple}hr[data-astro-cid-37fxchfa]{margin:2em 0;border:none;border-top:1px solid #aaa}ul[data-astro-cid-37fxchfa]{padding-left:1.5em}footer[data-astro-cid-37fxchfa]{margin-top:3em;font-size:12px;color:#666}.box[data-astro-cid-37fxchfa]{border:1px solid #000;padding:10px;background-color:#eee;margin-bottom:1em}.note[data-astro-cid-37fxchfa]{font-size:12px;color:#666}
+</style></head> <body data-astro-cid-37fxchfa> <h1 data-astro-cid-37fxchfa>aws</h1> <main data-astro-cid-37fxchfa>  <h2 id="aws">aws</h2>
+<hr>
+<h2 id="docdb-と-mongodb-の設計">DocDB と MongoDB の設計</h2>
+<p>参考ページ
+<a href="https://www.mongodb.com/ja-jp/docs/v6.0/core/data-modeling-introduction/">https://www.mongodb.com/ja-jp/docs/v6.0/core/data-modeling-introduction/</a></p>
+<hr>
+<h2 id="ローカルで-lambda-をデプロイした">ローカルで Lambda をデプロイした</h2>
+<p>・sam deploy —guided でデプロイできる
+・helloworld-HelloWorldFunction-pvRtm6gdlAnL という構成で生成されちゃう。
+これを制御するには、template.yaml の FunctionName で指定する
+・build, deploy で update できた
+・apigateway もデプロイされてしまった。これは Event で apigateway を指定していたから
+・Events を除去すれば単体アップ可能</p>
+<h2 id="レイヤーを作ってアタッチしたい">レイヤーを作ってアタッチしたい</h2>
+<p>・layer をローカルに普通に作る
+・pip install する
+・template.yaml で定義する。
+・lambda にアタッチする
+・普通に build, deploy すれば行けた！
+・これで requirements.txt 削除できる</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>  CommonLibsLayer:</span></span>
+<span class="line"><span>    Type: AWS::Serverless::LayerVersion</span></span>
+<span class="line"><span>    Properties:</span></span>
+<span class="line"><span>      LayerName: common-libs-layer</span></span>
+<span class="line"><span>      ContentUri: my-layer/</span></span>
+<span class="line"><span>      CompatibleRuntimes:</span></span>
+<span class="line"><span>        - python3.12</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    ラムダ</span></span>
+<span class="line"><span>    Properties:</span></span>
+<span class="line"><span>      CodeUri: hello_world/</span></span>
+<span class="line"><span>      Handler: app.lambda_handler</span></span>
+<span class="line"><span>      Runtime: python3.12</span></span>
+<span class="line"><span>      Layers:</span></span>
+<span class="line"><span>        - !Ref CommonLibsLayer #</span></span></code></pre>
+<h2 id="githubaction-で-samdeploy-する">githubaction で samdeploy する</h2>
+<p>・デプロイがコケる。toml が悪いみたい。false にすれば進むみたい</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[default.deploy.parameters]</span></span>
+<span class="line"><span>capabilities = "CAPABILITY_IAM"</span></span>
+<span class="line"><span>confirm_changeset = false</span></span>
+<span class="line"><span>resolve_s3 = true</span></span></code></pre>
+<h1 id="codepipeline-でデプロイしてみる">codepipeline でデプロイしてみる</h1>
+<p>・普通に sam init する
+・でも workflow 作らない
+・github 側でブランチを aws 側に接続できるよう許可しておく
+・buildspec.yml を作っておく</p>
+<hr>
+<p>・よくわからんけどいったん cloudformation にしておく
+・codepipe でパイプラインをぽちぽちで作った。
+・S3 に置き場所を作る必要がある
+・ソース、ビルド、デプロイを用意しないといけない。ビルドもできない
+・packaged.yml にする必要がある
+・samconfig.toml でで S3 のリゾルブする必要がある
+・ロールが 2 つある。それぞれに。権限をつける
+・pipeline 側で色々設定する。
+・成功した。
+・パイプライン自体を削除しても、リソースは削除されない</p>
+<hr>
+<h1 id="api-キーを定義してみる">api キーを定義してみる</h1>
+<p>・キーとリソースとか定義する</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>  # APIキーのリソースを定義</span></span>
+<span class="line"><span>  ApiKey:</span></span>
+<span class="line"><span>    Type: AWS::ApiGateway::ApiKey</span></span>
+<span class="line"><span>    Properties:</span></span>
+<span class="line"><span>      Name: RecipesApiKey # コンソールで表示されるキーの名前</span></span>
+<span class="line"><span>      Enabled: true</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  # APIの利用計画を定義</span></span>
+<span class="line"><span>  ApiUsagePlan:</span></span>
+<span class="line"><span>    Type: AWS::ApiGateway::UsagePlan</span></span>
+<span class="line"><span>    Properties:</span></span>
+<span class="line"><span>      UsagePlanName: UsagePlan # コンソールで表示される計画の名前</span></span>
+<span class="line"><span>      ApiStages:</span></span>
+<span class="line"><span>        - ApiId: !Ref ServerlessRestApi # SAMが自動で作成するAPIのIDを参照</span></span>
+<span class="line"><span>          Stage: Prod # デプロイされるステージ名</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  # 作成したAPIキーと利用計画を紐付け</span></span>
+<span class="line"><span>  ApiUsagePlanKey:</span></span>
+<span class="line"><span>    Type: AWS::ApiGateway::UsagePlanKey</span></span>
+<span class="line"><span>    Properties:</span></span>
+<span class="line"><span>      KeyId: !Ref ApiKey</span></span>
+<span class="line"><span>      KeyType: API_KEY</span></span>
+<span class="line"><span>      UsagePlanId: !Ref ApiUsagePlan</span></span></code></pre>
+<p>・リリースしたタイミングでキーが生成される
+・git であやまってコミットしてしまった。隠しファイルとか</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>//stream状況確認</span></span>
+<span class="line"><span>aws dynamodb describe-table --table-name movies --query 'Table.StreamSpecification'</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span></code></pre>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2026 techcampesinos
+<br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

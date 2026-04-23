@@ -8,17 +8,17 @@ source: "gitで困ったら"
 
 ## `git stash` と `git stash -u` の違い
 
-| コマンド | 保存対象 |
-|----------|-------------------------------|
-| `git stash` | **変更した tracked ファイル** のみ |
+| コマンド       | 保存対象                                                 |
+| -------------- | -------------------------------------------------------- |
+| `git stash`    | **変更した tracked ファイル** のみ                       |
 | `git stash -u` | **tracked + untracked ファイル**（未追跡ファイルも含む） |
 
-### trackedとは？
+### tracked とは？
 
 - `git add` して Git に登録されたファイル。
 - 変更は stash できる。
 
-### untrackedとは？
+### untracked とは？
 
 - 作ったけど `git add` していないファイル（`git status` で赤い文字になる）。
 - `git stash` だけでは退避されない。
@@ -59,3 +59,18 @@ git stash list
 - `git stash -a` は `.gitignore` されたファイルも含む（通常は使わない）
 - `pop` は失敗すると変更が失われる可能性があるため、慎重に
 - `apply` + `drop` で段階的に戻すのもアリ
+
+# 階層を一段下で作りたい場合
+
+# sam-project の一つ上の階層で実行
+
+rm -rf .git
+cd sam-project
+
+git init -b main
+git add .
+git commit -m "Fix repository root structure"
+
+git remote add origin [リポジトリの URL]
+
+git push -u --force origin main

@@ -18,12 +18,12 @@
 
 
 <table><thead><tr><th>コマンド</th><th>保存対象</th></tr></thead><tbody><tr><td><code>git stash</code></td><td><strong>変更した tracked ファイル</strong> のみ</td></tr><tr><td><code>git stash -u</code></td><td><strong>tracked + untracked ファイル</strong>（未追跡ファイルも含む）</td></tr></tbody></table>
-<h3 id="trackedとは">trackedとは？</h3>
+<h3 id="tracked-とは">tracked とは？</h3>
 <ul>
 <li><code>git add</code> して Git に登録されたファイル。</li>
 <li>変更は stash できる。</li>
 </ul>
-<h3 id="untrackedとは">untrackedとは？</h3>
+<h3 id="untracked-とは">untracked とは？</h3>
 <ul>
 <li>作ったけど <code>git add</code> していないファイル（<code>git status</code> で赤い文字になる）。</li>
 <li><code>git stash</code> だけでは退避されない。</li>
@@ -45,6 +45,15 @@
 <li><code>git stash -a</code> は <code>.gitignore</code> されたファイルも含む（通常は使わない）</li>
 <li><code>pop</code> は失敗すると変更が失われる可能性があるため、慎重に</li>
 <li><code>apply</code> + <code>drop</code> で段階的に戻すのもアリ</li>
-</ul>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
-&copy; 2025 techcampesinos
+</ul>
+<h1 id="階層を一段下で作りたい場合">階層を一段下で作りたい場合</h1>
+<h1 id="sam-project-の一つ上の階層で実行">sam-project の一つ上の階層で実行</h1>
+<p>rm -rf .git
+cd sam-project</p>
+<p>git init -b main
+git add .
+git commit -m “Fix repository root structure”</p>
+<p>git remote add origin [リポジトリの URL]</p>
+<p>git push -u —force origin main</p>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+&copy; 2026 techcampesinos
 <br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>

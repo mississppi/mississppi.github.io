@@ -22,6 +22,9 @@ const sql_sorted = sql.sort((a, b) => a.data.order - b.data.order); // 章順に
 const docker = await getCollection('docker');
 const docker_sorted = docker.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
 
+const ai = await getCollection('ai');
+const ai_sorted = ai.sort((a, b) => a.data.order - b.data.order); // 章順に並べる
+
 ---
 <BaseLayout title="Techcampesinos">
   <h1>読みやすいコード技法集</h1>
@@ -83,6 +86,15 @@ const docker_sorted = docker.sort((a, b) => a.data.order - b.data.order); // 章
     {docker_sorted.map((item) => (
       <li>
         <a href={`/docker/${item.slug}`}>{item.data.title}</a>
+      </li>
+    ))}
+  </ul>
+
+  <h1>ai</h1>
+  <ul>
+    {ai_sorted.map((item) => (
+      <li>
+        <a href={`/ai/${item.slug}`}>{item.data.title}</a>
       </li>
     ))}
   </ul>
