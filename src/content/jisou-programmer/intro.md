@@ -159,9 +159,204 @@ def do something(users):
     # SQL実行回数を減らすため、このループは別関数に分離せず処理する
 ```
 
-## 1.1 クラス設計
+コントローラでは値の入出力と、処理全体の制御のみを行うべき。
 
-## 1.1 モジュール設計
+webプリは以下のような責務を持っている
+
+・Form：入力のバリデーションチェック
+・HTMLの画面に入力フォームを表示
+・フォームから送信されたデータを検証する
+
+・Template: 値の描画
+・テンプレート値から、HTMLを描画してブラウザ上の画面を表示する
+・数字のコンマ区切りや、１００文字以上は。。。で略す。のような表示上の処理をする
+
+・Model：データの保存
+・DBに情報を永続化する
+・永続化されたデータを条件をして取得する
+・税込価格の取得、公開済み商品の取得というよくある処理をモデルのプロパティーやQuerySetに実装する
+
+## 1.2 クラス設計
+
+12. 辞書でなくクラスを定義する
+
+bad
+
+```
+def get_fullname(user):
+    return user['last_name'] + user['first_name]
+
+とにかくdefでやろうとする
+```
+
+```
+@dataclass
+class User:
+    last_name: str
+    first_name: str
+    birthday: date
+```
+
+「特定のキーをもつ辞書」が悪い理由
+・特定キーが存在しているかチェックが必要になることがある
+・他の形式の辞書で使えない関数なので再利用性が低い
+・再利用性が低い割に色々受けいれられるので
+
+クラスのメリット
+・REPLでクラス名が表示される
+・isinstanceでチェックできる
+・型アノテをすると、指定したクラスが引数に渡されるかをチェックできる
+・IDEで動的解析をするときに、クラスの定義者にジャンプしたり、関数の入出力をクラスのインスタンスで制限できる
+・クラス名でコード検索すれば、そのクラスが利用される処理をすぐ見つけられる
+
+13. dataclassを使う
+
+```
+def __init__()
+    これがめんどい
+```
+
+14. 別メソッドに値を渡すためだけに属性を設定しない
+
+bad
+
+```
+class User:
+    def__init__():
+        self.username = username
+        self.age = None
+
+    def calc_age(self):
+        計算処理
+        self.age = age
+
+    def age_display(self):
+        return f"{self.age}"
+```
+
+先にage_displayを呼び出すとNoneが出てしまう。
+別のメソッドに値を渡すためだけに属性設定はやめる
+
+```
+class User:
+    def __init__(self, username, birthday):
+        self.=　
+
+    @property
+    def age(self):
+        ageの計算
+        return age
+
+    def age_display(self ):
+        return f"{self.age}"
+```
+
+@propertyとは
+・メソッドを属性のように使える
+・user.ageで呼び出せる
+・計算を隠蔽できる
+・必要な時だけ計算
+・バリデとか後から追加
+
+15. インスタンスを作る関数をクラスメソッドにする
+
+bad:
+このクラスを使う別のモジュールから、Productクラスとretrieve_protuct関数を
+インポートする必要がある。
+
+```
+@dataclass
+class Product:
+    id: int
+    name: str
+
+def retrieve_product(id):
+    res = requests.get(f'/api/products/{id}')
+    data = res.json()
+    return Product(
+        id=data['id']
+        name=data['name']
+    )
+```
+
+best:
+・外部APIからrequestする処理は分離するといい。
+・常にAPIから取得すべきデータである場合は、クラスメソッドにすると使いやすい。
+
+```
+@dataclass
+class Product:
+    id: int
+    name: str
+
+    @classmethod
+    def retrieve(cls, id: int) -> 'Product':
+        data = retrieve_product_detail(id)
+        return cls(
+            id=data['id'],
+            name=data['name'],
+        )
+
+
+```
+
+## 1.3 モジュール設計
+
+16. utils.pyのような汎用は避ける
+
+best:
+・データをフィルタするならmodels.pyなど
+・リクエストはrequest.py
+・クラス作る場合、意味が求められるので、utils.pyとかふむき
+
+17. ビジネスロジックをモジュールに分割する
+
+bad
+
+```
+View関数をまとめるviews.py(コントローラ)にView関数でない関数も記載する
+
+def render_purchase_mail():
+
+def purchase():
+
+```
+
+best
+
+```
+payment.pyとする
+
+def render_purchase_mail():
+
+def purchase():
+```
+
+18. モジュール名のおすすめ
+
+best
+
+```
+- api (外部APIにアクセスする処理)
+-- __init__.py
+-- item.py(商品のAPI)
+-- user.py(ユーザのAPI)
+
+- commands(コマンドラインツールのサブコマンド)
+-- list.py(商品一覧のコマンドのin/out)
+-- purchase.py(購入コマンドのin/out)
+
+- consts.py(定数)
+- main.py
+- models.py(商品、ユーザのデータを永続化するクラスをまとめる)
+- purchase.py(商品購入する処理)
+- validators.py(command LINEからのinputをチェックする処理)
+```
+
+認証: authentication.py
+認可: permission.py / authorization.py
+バリデーション: validations.py / validators.py
+例外: exceptions.py
 
 ## 1.1 ユニットテスト
 
@@ -170,3 +365,39 @@ def do something(users):
 ## 1.1 レビュー
 
 ##
+
+## 4.2 サーバ構成
+
+88. 共有ストレージを用意しよう
+
+サーバが複数台あったときアップロードしたファイルなどを共有データをとこに置くか。
+
+best:
+・アップしたファイルを集約して管理するような共有ストレージとなるサーバを用意
+・現実的にはクラウドの巣レージを利用した運用・コストを抑えられる。
+
+89. CDNを使おう
+
+静的ファイルはキャッシュ化してCDNで配信しよう。
+
+https://blog.redbox.ne.jp/what-is-cdn.html
+
+90. KVSを利用しよう
+
+bad
+・一覧系データをメモリに乗せてしまった。
+
+best
+・KVSを利用して、Redisを使った
+
+注意:
+RDB側チューニングで高速化できればKVSは後回しでいい。
+
+91. 時間のかかる処理は非同期
+    リアルタイムで処理が必要な部分で時間がかかる場合、非同期化したほうがいい。
+
+・ThreadPoolExecutor : 別スレッド
+・ayncio
+・Celery: ジョブキューシステム(ジョブ単位でキューに積んでおく。)
+
+92. タスク非同期処理

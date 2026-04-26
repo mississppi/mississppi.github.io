@@ -113,11 +113,197 @@ noneにして関数内で空を詰める</p>
 <span class="line"><span>    """</span></span>
 <span class="line"><span></span></span>
 <span class="line"><span>    # SQL実行回数を減らすため、このループは別関数に分離せず処理する</span></span></code></pre>
-<h2 id="11-クラス設計">1.1 クラス設計</h2>
-<h2 id="11-モジュール設計">1.1 モジュール設計</h2>
+<p>コントローラでは値の入出力と、処理全体の制御のみを行うべき。</p>
+<p>webプリは以下のような責務を持っている</p>
+<p>・Form：入力のバリデーションチェック
+・HTMLの画面に入力フォームを表示
+・フォームから送信されたデータを検証する</p>
+<p>・Template: 値の描画
+・テンプレート値から、HTMLを描画してブラウザ上の画面を表示する
+・数字のコンマ区切りや、１００文字以上は。。。で略す。のような表示上の処理をする</p>
+<p>・Model：データの保存
+・DBに情報を永続化する
+・永続化されたデータを条件をして取得する
+・税込価格の取得、公開済み商品の取得というよくある処理をモデルのプロパティーやQuerySetに実装する</p>
+<h2 id="12-クラス設計">1.2 クラス設計</h2>
+<ol start="12">
+<li>辞書でなくクラスを定義する</li>
+</ol>
+<p>bad</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def get_fullname(user):</span></span>
+<span class="line"><span>    return user['last_name'] + user['first_name]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>とにかくdefでやろうとする</span></span></code></pre>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>@dataclass</span></span>
+<span class="line"><span>class User:</span></span>
+<span class="line"><span>    last_name: str</span></span>
+<span class="line"><span>    first_name: str</span></span>
+<span class="line"><span>    birthday: date</span></span></code></pre>
+<p>「特定のキーをもつ辞書」が悪い理由
+・特定キーが存在しているかチェックが必要になることがある
+・他の形式の辞書で使えない関数なので再利用性が低い
+・再利用性が低い割に色々受けいれられるので</p>
+<p>クラスのメリット
+・REPLでクラス名が表示される
+・isinstanceでチェックできる
+・型アノテをすると、指定したクラスが引数に渡されるかをチェックできる
+・IDEで動的解析をするときに、クラスの定義者にジャンプしたり、関数の入出力をクラスのインスタンスで制限できる
+・クラス名でコード検索すれば、そのクラスが利用される処理をすぐ見つけられる</p>
+<ol start="13">
+<li>dataclassを使う</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>def __init__()</span></span>
+<span class="line"><span>    これがめんどい</span></span></code></pre>
+<ol start="14">
+<li>別メソッドに値を渡すためだけに属性を設定しない</li>
+</ol>
+<p>bad</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>class User:</span></span>
+<span class="line"><span>    def__init__():</span></span>
+<span class="line"><span>        self.username = username</span></span>
+<span class="line"><span>        self.age = None</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    def calc_age(self):</span></span>
+<span class="line"><span>        計算処理</span></span>
+<span class="line"><span>        self.age = age</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    def age_display(self):</span></span>
+<span class="line"><span>        return f"{self.age}"</span></span></code></pre>
+<p>先にage_displayを呼び出すとNoneが出てしまう。
+別のメソッドに値を渡すためだけに属性設定はやめる</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>class User:</span></span>
+<span class="line"><span>    def __init__(self, username, birthday):</span></span>
+<span class="line"><span>        self.=　</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    @property</span></span>
+<span class="line"><span>    def age(self):</span></span>
+<span class="line"><span>        ageの計算</span></span>
+<span class="line"><span>        return age</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    def age_display(self ):</span></span>
+<span class="line"><span>        return f"{self.age}"</span></span></code></pre>
+<p>@propertyとは
+・メソッドを属性のように使える
+・user.ageで呼び出せる
+・計算を隠蔽できる
+・必要な時だけ計算
+・バリデとか後から追加</p>
+<ol start="15">
+<li>インスタンスを作る関数をクラスメソッドにする</li>
+</ol>
+<p>bad:
+このクラスを使う別のモジュールから、Productクラスとretrieve_protuct関数を
+インポートする必要がある。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>@dataclass</span></span>
+<span class="line"><span>class Product:</span></span>
+<span class="line"><span>    id: int</span></span>
+<span class="line"><span>    name: str</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def retrieve_product(id):</span></span>
+<span class="line"><span>    res = requests.get(f'/api/products/{id}')</span></span>
+<span class="line"><span>    data = res.json()</span></span>
+<span class="line"><span>    return Product(</span></span>
+<span class="line"><span>        id=data['id']</span></span>
+<span class="line"><span>        name=data['name']</span></span>
+<span class="line"><span>    )</span></span></code></pre>
+<p>best:
+・外部APIからrequestする処理は分離するといい。
+・常にAPIから取得すべきデータである場合は、クラスメソッドにすると使いやすい。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>@dataclass</span></span>
+<span class="line"><span>class Product:</span></span>
+<span class="line"><span>    id: int</span></span>
+<span class="line"><span>    name: str</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    @classmethod</span></span>
+<span class="line"><span>    def retrieve(cls, id: int) -> 'Product':</span></span>
+<span class="line"><span>        data = retrieve_product_detail(id)</span></span>
+<span class="line"><span>        return cls(</span></span>
+<span class="line"><span>            id=data['id'],</span></span>
+<span class="line"><span>            name=data['name'],</span></span>
+<span class="line"><span>        )</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="13-モジュール設計">1.3 モジュール設計</h2>
+<ol start="16">
+<li>utils.pyのような汎用は避ける</li>
+</ol>
+<p>best:
+・データをフィルタするならmodels.pyなど
+・リクエストはrequest.py
+・クラス作る場合、意味が求められるので、utils.pyとかふむき</p>
+<ol start="17">
+<li>ビジネスロジックをモジュールに分割する</li>
+</ol>
+<p>bad</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>View関数をまとめるviews.py(コントローラ)にView関数でない関数も記載する</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def render_purchase_mail():</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def purchase():</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>best</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>payment.pyとする</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def render_purchase_mail():</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def purchase():</span></span></code></pre>
+<ol start="18">
+<li>モジュール名のおすすめ</li>
+</ol>
+<p>best</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>- api (外部APIにアクセスする処理)</span></span>
+<span class="line"><span>-- __init__.py</span></span>
+<span class="line"><span>-- item.py(商品のAPI)</span></span>
+<span class="line"><span>-- user.py(ユーザのAPI)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>- commands(コマンドラインツールのサブコマンド)</span></span>
+<span class="line"><span>-- list.py(商品一覧のコマンドのin/out)</span></span>
+<span class="line"><span>-- purchase.py(購入コマンドのin/out)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>- consts.py(定数)</span></span>
+<span class="line"><span>- main.py</span></span>
+<span class="line"><span>- models.py(商品、ユーザのデータを永続化するクラスをまとめる)</span></span>
+<span class="line"><span>- purchase.py(商品購入する処理)</span></span>
+<span class="line"><span>- validators.py(command LINEからのinputをチェックする処理)</span></span></code></pre>
+<p>認証: authentication.py
+認可: permission.py / authorization.py
+バリデーション: validations.py / validators.py
+例外: exceptions.py</p>
 <h2 id="11-ユニットテスト">1.1 ユニットテスト</h2>
 <h2 id="11-実装の進め方">1.1 実装の進め方</h2>
 <h2 id="11-レビュー">1.1 レビュー</h2>
-<h2 id=""></h2>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+<h2 id=""></h2>
+<h2 id="42-サーバ構成">4.2 サーバ構成</h2>
+<ol start="88">
+<li>共有ストレージを用意しよう</li>
+</ol>
+<p>サーバが複数台あったときアップロードしたファイルなどを共有データをとこに置くか。</p>
+<p>best:
+・アップしたファイルを集約して管理するような共有ストレージとなるサーバを用意
+・現実的にはクラウドの巣レージを利用した運用・コストを抑えられる。</p>
+<ol start="89">
+<li>CDNを使おう</li>
+</ol>
+<p>静的ファイルはキャッシュ化してCDNで配信しよう。</p>
+<p><a href="https://blog.redbox.ne.jp/what-is-cdn.html">https://blog.redbox.ne.jp/what-is-cdn.html</a></p>
+<ol start="90">
+<li>KVSを利用しよう</li>
+</ol>
+<p>bad
+・一覧系データをメモリに乗せてしまった。</p>
+<p>best
+・KVSを利用して、Redisを使った</p>
+<p>注意:
+RDB側チューニングで高速化できればKVSは後回しでいい。</p>
+<ol start="91">
+<li>時間のかかる処理は非同期
+リアルタイムで処理が必要な部分で時間がかかる場合、非同期化したほうがいい。</li>
+</ol>
+<p>・ThreadPoolExecutor : 別スレッド
+・ayncio
+・Celery: ジョブキューシステム(ジョブ単位でキューに積んでおく。)</p>
+<ol start="92">
+<li>タスク非同期処理</li>
+</ol>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
 &copy; 2026 techcampesinos
 <br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
