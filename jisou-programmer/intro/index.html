@@ -303,7 +303,16 @@ RDB側チューニングで高速化できればKVSは後回しでいい。</p>
 ・ayncio
 ・Celery: ジョブキューシステム(ジョブ単位でキューに積んでおく。)</p>
 <ol start="92">
-<li>タスク非同期処理</li>
-</ol>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+<li>タスク非同期処理
+Gunicornのワーカプロセスなど自動的に再起動されるプロセス上で、スレッドやこプロセスはNG。</li>
+</ol>
+<p>Gunicorは一定時間でワーカが再起動される設定がある。意図しないタイミングでされる。</p>
+<p>スレッドは管理する実装が必要。</p>
+<p>best:
+・自作はしないようにする。
+・Celery
+・Django
+・APCheduler</p>
+<h2 id="43-プロセス設計">4.3 プロセス設計</h2>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
 &copy; 2026 techcampesinos
 <br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
