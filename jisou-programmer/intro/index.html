@@ -313,6 +313,98 @@ Gunicornのワーカプロセスなど自動的に再起動されるプロセス
 ・Celery
 ・Django
 ・APCheduler</p>
-<h2 id="43-プロセス設計">4.3 プロセス設計</h2>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+<h2 id="43-プロセス設計">4.3 プロセス設計</h2>
+<ol start="93">
+<li>サービスマネージャでプロセス管理する</li>
+</ol>
+<p>manage.py runserverコマンドもアプリサーバ機能を提供するが簡易的機能。
+並行処理を持ってない。js,cssとかを並行で処理できない。常駐には向いてない</p>
+<p>best:
+サービスマネージャとwebアプリケーションサーバを使用する。
+・サービスマネージャ:
+常駐デーモンの管理、異常終了の再起動とか。LinuxのSystemedが標準的に利用される。</p>
+<p>・Webアプリサーバは Gunicorn ,uWSGIなどが一般利用される。
+複数プロセス起動の並列処理機能、死活監視などを提供。動作が早い</p>
+<p>たとえばGunicornは、
+・worker x 4
+・リクエスト1000回ごとにメモリ、リソース解放
+・応答しないプロセスは再起動
+・ログもだせる
+・Gunicorn > systemedを起動</p>
+<ol start="94">
+<li>デーモンは自動起動させておこう</li>
+</ol>
+<p>bad:
+webアプリをsystemedでデーモン化したので、プロセスkillしても再起動されるが、
+セキュリティパッチの適用で再起動したものの、起動しない</p>
+<p>best:
+systemctlで自動機能の設定をしておく</p>
+<p>95.Celeryのタスクにはプリミティブなデータを渡す</p>
+<p>bad:
+モデルデータをオブジェクトそのままにCelrarlyを渡す。負荷をかけることがある。</p>
+<p>best:
+int,strで渡す。</p>
+<h2 id="44-ライブラリ">4.4 ライブラリ</h2>
+<ol start="96">
+<li>要件から適切なライブラリを選ぶ</li>
+</ol>
+<p>best:</p>
+<p>・要件を満たすライブラリを探す
+要件をしっかり正しく把握する。メンテに苦労したりする。
+リスト化して本当に必要か。吟味する。</p>
+<p>・先行事例を確認する</p>
+<p>・枯れているライブラリを利用する
+Awesome Python, DjangoPckagesなどサイト見てみる</p>
+<p>・ライセンスを確認する
+商用は有償みたいなことがあるのでしっかり確認</p>
+<p>・オフィシャルかどうか調べておく</p>
+<p>・注意すること
+テストがない。
+CIが設定されてない。
+サンプル、ドキュメントがない
+リリースノートがない
+半年くらい開発止まっている
+パッケージの作り方がガイドラインに従ってない
+issueを放置している。
+ライセンス明記してない
+ただフォークされている</p>
+<ol start="98">
+<li>更新
+セキュリティパッチはなるはやで適用しよう
+開発用ツールは極端に言えばあげない。</li>
+</ol>
+<h2 id="45-リソース設計">4.5 リソース設計</h2>
+<ol start="100">
+<li>ファイルパスはプログラムからの相対パスで組み立てる</li>
+</ol>
+<p>bad:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>import csv</span></span>
+<span class="line"><span>from pathlib import Path</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>CSV_PATH = Path('target.csv')</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>with CSV_PATH.open(mode='r') as fp:</span></span>
+<span class="line"><span>    reader = csv.reader(fp)</span></span>
+<span class="line"><span>    for row in reader:</span></span>
+<span class="line"><span>        print(row)</span></span></code></pre>
+<p>これでprojectディレクトリに移動して実行するとファイルが見つからない。</p>
+<p>best:
+どこからプログラムを起動されても適切に動くようにパスを組み立てる</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>import csv</span></span>
+<span class="line"><span>from pathlib import Path</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 起点となるプログラムがあるパス</span></span>
+<span class="line"><span>here = Path(__file__).parent</span></span>
+<span class="line"><span>CSV_PATH = here / 'target.csv'</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>with CSV_PATH.open(mode='r') as fp:</span></span>
+<span class="line"><span>    reader = csv.reader(fp)</span></span>
+<span class="line"><span>    for row in reader:</span></span>
+<span class="line"><span>        print(row)</span></span>
+<span class="line"><span></span></span></code></pre>
+<p><strong>file</strong>を利用することでそのファイルへのパスを取得できる。
+そこから現在のディレクトリのパスを取得して、想定的な外部ファイルまでのパスを組み立てれば、どこから実行されてもファイルが見つかる。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>djangoならこれを使う</span></span>
+<span class="line"><span>CSV_PATH = Path(settings.BASE_DIR, 'data', 'target.csv')</span></span></code></pre>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
 &copy; 2026 techcampesinos
 <br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
