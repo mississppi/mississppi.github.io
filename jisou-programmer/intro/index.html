@@ -405,6 +405,41 @@ issueを放置している。
 <p><strong>file</strong>を利用することでそのファイルへのパスを取得できる。
 そこから現在のディレクトリのパスを取得して、想定的な外部ファイルまでのパスを組み立てれば、どこから実行されてもファイルが見つかる。</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>djangoならこれを使う</span></span>
-<span class="line"><span>CSV_PATH = Path(settings.BASE_DIR, 'data', 'target.csv')</span></span></code></pre>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
+<span class="line"><span>CSV_PATH = Path(settings.BASE_DIR, 'data', 'target.csv')</span></span></code></pre>
+<p>101ファイルを格納するディレクトリを分散させる</p>
+<p>best:
+分散にはいくつかある。</p>
+<p>・元にあるデータのIDを利用してディレクトリを分ける</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>/receipts/123/receipt-20190718-123456.pdf</span></span>
+<span class="line"><span>/receipts/124/receipt-20190718-123456.pdf</span></span></code></pre>
+<p>メリット: わかりやすい
+デメリット: レコード数分だけディレクトリができる。また速度低下の原因になる</p>
+<p>・ファイル名からハッシュを作成して、3文字のディレクトリで分ける</p>
+<p>メリット: ディレクトリを抑えることができる
+デメリット: 計算が発生。同一ファイル名がないことが前提</p>
+<ol start="102">
+<li>一時的な作業ファイルは一時ファイル置き場に作成する</li>
+</ol>
+<p>作成処理中の位置値ファイルを最終的な保存ようディレクトリに作成はしてはいけない。
+一時ファイルと同等に扱ってはいけない。エラーになったら残骸になる。</p>
+<p>best:
+一時ファイル置き場をつくる。定期的な不要ファイルをクリーンアップも必要</p>
+<ol start="103">
+<li>一時的な作業ファイルには絶対に競合しない名前を使う</li>
+</ol>
+<p>具体的なbad:
+秒レベルでの競合してしまった。ファイル名競合。</p>
+<p>best:
+Pythonのtempfileモジュールを使う。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>import tempfile</span></span>
+<span class="line"><span>with tempfile.NamedTemporaryFile(prefix='receipt-') as f:</span></span>
+<span class="line"><span>    f.write(data)</span></span>
+<span class="line"><span>    send_file(f.name)</span></span></code></pre>
+<ol start="104">
+<li>セッションデータはRDB or KVSを使う</li>
+</ol>
+<p>best:
+・RDB: 手軽。同時書き込み負荷が高い
+・KVS: 読み書き高速で自動削除機能もある</p>  </main> <hr data-astro-cid-37fxchfa> <footer data-astro-cid-37fxchfa>
 &copy; 2026 techcampesinos
 <br data-astro-cid-37fxchfa> <span class="note" data-astro-cid-37fxchfa>This page is best viewed with Netscape Navigator 4.7</span> </footer> </body></html>
