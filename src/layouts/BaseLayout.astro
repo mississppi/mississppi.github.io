@@ -6,71 +6,219 @@ const { title = "techcampesinos", children } = Astro.props;
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         margin: 0;
-        padding: 20px;
+        padding: 0;
+        background-color: #fafafa;
+        color: #333;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", "游ゴシック体", "Yu Gothic", YuGothic, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+        font-size: 18px;
+        line-height: 1.7;
+      }
+
+      main {
+        max-width: 950px;
+        margin: 0 auto;
+        padding: 40px 24px;
         background-color: #ffffff;
-        color: #000000;
-        font-family: "MS PGothic", "Osaka", sans-serif;
-        font-size: 14px;
+        min-height: calc(100vh - 100px);
       }
 
-      h1, h2, h3 {
-        font-weight: bold;
-        border-bottom: 1px solid #000;
-        padding-bottom: 0.25em;
+      /* 見出し */
+      h1 {
+        font-size: 32px;
+        font-weight: 700;
+        line-height: 1.3;
+        margin: 0 0 1.5em 0;
+        padding-bottom: 0.5em;
+        border-bottom: 3px solid #e1e4e8;
+        color: #1a1a1a;
       }
 
+      h2 {
+        font-size: 26px;
+        font-weight: 700;
+        line-height: 1.4;
+        margin: 2.5em 0 1em 0;
+        padding-bottom: 0.3em;
+        border-bottom: 2px solid #e1e4e8;
+        color: #1a1a1a;
+      }
+
+      h3 {
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 2em 0 0.8em 0;
+        color: #1a1a1a;
+      }
+
+      h4 {
+        font-size: 19px;
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 1.5em 0 0.7em 0;
+        color: #1a1a1a;
+      }
+
+      /* 段落とリスト */
+      p {
+        margin: 1.5em 0;
+        color: #333;
+      }
+
+      ul, ol {
+        margin: 1.5em 0;
+        padding-left: 2em;
+      }
+
+      li {
+        margin: 0.5em 0;
+      }
+
+      /* リンク */
       a {
-        color: #0000ee;
+        color: #0969da;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+
+      a:hover {
+        color: #0550ae;
         text-decoration: underline;
       }
 
       a:visited {
-        color: #800080;
+        color: #8250df;
       }
 
-      hr {
+      /* コードブロック */
+      code {
+        font-family: "Fira Code", "Menlo", "Monaco", "Courier New", monospace;
+        font-size: 0.9em;
+        background-color: #f6f8fa;
+        padding: 0.2em 0.4em;
+        border-radius: 3px;
+        color: #d73a49;
+      }
+
+      pre {
+        background-color: #f6f8fa;
+        border: 1px solid #e1e4e8;
+        border-radius: 6px;
+        padding: 16px;
+        overflow-x: auto;
         margin: 2em 0;
+        line-height: 1.6;
+      }
+
+      pre code {
+        background-color: transparent;
+        padding: 0;
+        color: #24292f;
+        font-size: 14px;
+      }
+
+      /* 引用 */
+      blockquote {
+        margin: 2em 0;
+        padding: 0 1em;
+        border-left: 4px solid #d0d7de;
+        color: #57606a;
+        background-color: #f6f8fa;
+      }
+
+      /* テーブル */
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 2em 0;
+      }
+
+      th, td {
+        border: 1px solid #d0d7de;
+        padding: 8px 12px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f6f8fa;
+        font-weight: 600;
+      }
+
+      /* 水平線 */
+      hr {
+        margin: 3em 0;
         border: none;
-        border-top: 1px solid #aaa;
+        border-top: 1px solid #d0d7de;
       }
 
-      ul {
-        padding-left: 1.5em;
-      }
-
+      /* フッター */
       footer {
-        margin-top: 3em;
-        font-size: 12px;
-        color: #666;
+        max-width: 950px;
+        margin: 0 auto;
+        padding: 24px;
+        font-size: 14px;
+        color: #57606a;
+        text-align: center;
       }
 
+      /* ボックス */
       .box {
-        border: 1px solid #000;
-        padding: 10px;
-        background-color: #eeeeee;
-        margin-bottom: 1em;
+        border: 1px solid #d0d7de;
+        border-radius: 6px;
+        padding: 16px;
+        background-color: #f6f8fa;
+        margin: 2em 0;
       }
 
       .note {
-        font-size: 12px;
-        color: #666;
+        font-size: 14px;
+        color: #57606a;
+      }
+
+      /* レスポンシブ */
+      @media (max-width: 768px) {
+        body {
+          font-size: 16px;
+        }
+
+        main {
+          padding: 24px 16px;
+        }
+
+        h1 {
+          font-size: 28px;
+        }
+
+        h2 {
+          font-size: 22px;
+        }
+
+        h3 {
+          font-size: 19px;
+        }
+
+        h4 {
+          font-size: 17px;
+        }
       }
     </style>
   </head>
   <body>
-    <h1>{title}</h1>
     <main>
+      <h1>{title}</h1>
       <slot />
     </main>
-    <hr />
     <footer>
-      &copy; {new Date().getFullYear()} techcampesinos  
-      <br />
-      <span class="note">This page is best viewed with Netscape Navigator 4.7</span>
+      &copy; {new Date().getFullYear()} techcampesinos
     </footer>
   </body>
 </html>

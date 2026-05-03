@@ -366,6 +366,192 @@ best
 
 ##
 
+## 4.1 プロジェクト構成
+
+79. 本番環境はシンプルな仕組みで構築する
+
+慣れているからいつもの構成は、よくない。
+
+best:
+機能をシンプルに。必要最小限で揃える。セキュリティ上の心配も増えるので。
+個人環境と本番環境を統一することに固執しない。代表的な組み合わせ
+
+#### OS提供のPython + venv + pip
+
+#### 公式Dockerイメージ + pip
+
+これらは単機能で仕組みの理解が簡単、セキュリティ更新が適用しやすい
+
+80. OSが提供するPythonを使う
+    ・セキュリティ更新情報が発信されている
+    ・セキュリティ更新がある、apt, yumコマンドがわかるようになっている
+    ・最新利用できない
+
+best:
+OSが提供するPythonを使う。Ubuntuはaptできるもの。RHELはyum、dnfができるもの。
+セキュリティ更新パッチも利用できる。
+
+81. OS標準以外のPythonを使う
+    ・好きに選べる
+    ・更新確認は独自で
+
+Best:
+デメリットがセキュリティ更新は自分ですること。
+
+82. Docker公式提供を使う。
+    ・比較的簡単い最新がつかえる
+
+83. Pythonの仮想環境を使う
+    ・仮想化した環境にインストールするため、OSのPythonを変更しなくていい
+    ・Dockerの場合、仮想化が二重化され冗長
+
+    Best:
+    ・プログラム実行環境をPython本体から切り離す。
+    ・仮想化しないと、古いファイル、依存古いライブラリが残る。
+    ・Dockerなどのコンテナを利用してる場合、基本的にPythonの仮想環境不要。
+
+84. リポジトリのルートディレクトリはシンプルに構成する
+
+    Bad:
+    ・直下に全て置いてる
+
+    Best:
+    ・リポジトリの主目的にあったもの。注目してほしいファイル、ディレクトリだけ。
+    ・README.mdには目次程度を書いておく。詳細書きすぎず、配下のmdへ参照させる
+    ・COMPOSE_FILE環境変数で設定ファイルを指定してもよし、Makefileにしてもよし。
+
+85. 設定ファイルを環境別に分割する
+
+    Best:
+    ・設定ファイルと共通部分と環境依存部分に分割する
+
+```
+base.py
+
+imoprt os
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEBUG = True
+ALLOWED_HOSTSW = []
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    ...
+    'mypp',
+]
+# MIDDLEWARE = [...]
+DATABASES = [
+    'default': {
+        'ENGINE': 'jango.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+]
+...
+
+```
+
+```
+local.py
+
+from .base import
+```
+
+```
+staging.py
+
+from .base import
+DEBUG = False
+ALLOWED_HOSTS = ['wwww.example.com']
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydatabse',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '127.0.0.1',
+        'POST': '5432',
+    }
+}
+```
+
+これで
+
+86. 状況依存の設定を環境変数に分離する
+
+    Bad:
+    ・多段継承して設定ファイルを管理する
+    ・次第に管理できなくなる
+    ・状況依存の設置値を設定ファイルで管理すると、一時的な設定変更のためにファイルを書き換え、その都度戻す必要がある。戻し忘れが発生したりする。
+
+    Best:
+    ・状況依存の設定値をコードから分離する。環境変数で設定する。
+    ・django-environ, python-decoupleでenv使える
+    ・デメリットは環境変数が増える。
+    ・環境依存設定は、「設定ファイルを環境別に分割管理」
+    ・状況依存の設定は「環境変数で管理」
+
+```
+これでDEBUGなければFalseとして動作する。
+
+import os
+DEBUG = bool(os.environ.get('DEBUG', False))
+```
+
+```
+DEBUG=True
+ALLOWED_HOSTS=127.0.0.1,localhost
+INTERNAL_IPS=127.0.0.1
+USE_SILD=True
+DATABASE_URL=sqlite://db.sqlite3
+```
+
+```
+DEBUG=False
+ALLOWED_HOSTS=www.example.com
+INTERNAL_IPS=
+USE_SILD=
+DATABASE_URL=postgres://mydatabaseuser:mypassword@127.0.0.1:5432/mydatabase
+```
+
+```
+
+setting.py
+
+imoprt os
+import environ
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(**file**)))
+env = environ.Env()
+env.reqd_env() # 現在のディレクトリか上位にある.envを読み込み、環境変数に設定する
+
+# env.bool()は、'true','on','ok','y','yes','1'を真として扱う
+DEBUG = env.bool('DEBUG')
+
+# env.list()は環境変数から取得した文字列をカンマ区切りでリストに変換
+
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+if DEBUG:
+INTERNAL_IPS = env.list('INTERNAL_IPS')
+INSTALLED_APPS = [
+'django.contrib.admin',
+...
+'myapp'
+]
+
+# MIDDLEWARE = [...]
+
+if env.bool('USE_SILK', default=False):
+INSTALLED_APPS.append('slik')
+MIDDLEWARE.append('slik.middleware.SilkyMiddleware')
+
+DATABASES = {
+'default': env.db_url('DATABASE_URL')
+}
+...
+
+```
+
+87. 設定ファイルもバージョン管理しよう
+
 ## 4.2 サーバ構成
 
 88. 共有ストレージを用意しよう
@@ -581,3 +767,56 @@ with tempfile.NamedTemporaryFile(prefix='receipt-') as f:
 best:
 ・RDB: 手軽。同時書き込み負荷が高い
 ・KVS: 読み書き高速で自動削除機能もある
+
+## 4.6 ネットワーク
+
+105. 127.0.0.1と0.0.0.0の違い
+
+127.0.0.1:8000を使うことをバインドという。127.0.0.1はローカルループバックという、
+そのコンピュータ内でのみアクセス可能なネットワークインタフェースのこと。
+このループバックにバインドした場合、同じコンピュータ内からは、
+http://127.0.0.1:8000にアクセスしてWebアプリを表示できるが、
+コンピュータ外から接続できない。
+
+best:
+サービスを提供したいIPアドレスにバインドすること。
+ローカル開発環境以外で起動したWebサーバにアクセスする場合は、どのネットワークインターフェースにバインドするか指定が必要
+コンピュータ外と直接通信するには、コンピュータ外との通信用ネットワークインタフェースのIPにバインドして起動する。
+python manage.py runserver 192.168.99.1:8000
+0.0.0.0にバインドすることで全てのネットワークインタフェースと接続できる
+
+・外部からアクセス可能にするには
+eth0などのコンピュータ外部と繋がっているネットワークインタフェースのIPを調べてバインドする。
+
+・全てのネットワークにバインドしたい場合
+0.0.0.0を指定する。ただ外部からもアクセス可能なので十分気を付ける
+
+106. ssh port forwardingによるリモートサーバアクセス
+
+best:
+ssh port forwardingは、ssh接続を利用して、外部のネットワークから直接通信できないポートへの接続を可能にする技術。
+対象サーバと直接http通信できない場合であっても、そのサーバにsshできれば、ssh port forwardingで、任意ポートと通信できる。
+
+```
+接続先はserver.example.comです。
+接続元PCのポートを接続先のserver.example.comから見てlocalhost:80に接続するようにトンネルを作成してる。
+ssh server.example.com -L 8000:localhost:80
+```
+
+```
+ゲートウェイとあるサーバserver.example.comに接続できる場合は、
+これで192の8000に接続できる。ただ、セキュリティ的にできない場合もある。
+ssh server.example.com -L 8000:192.168.99.1.:8000
+```
+
+107. リバースプロキシ
+     Gunicorn + Djangoを直接ネットに公開した場合、静的ファイルとかもあるので遅い
+
+best:
+WebサーバとしてApache, Nginxなどを設置し、Webアプリサーバにリバースプロキシで接続する。
+
+転送元のIPなどは、X-FORWRDED-HOST, X-FORWARDED-PROTOなどを組み立てて使う。
+
+108. Unixドメインソケットによるリバプロ
+
+　　
